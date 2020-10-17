@@ -1,0 +1,36 @@
+/**
+ * SapientPro
+ *
+ * @category    SapientPro
+ * @package     SapientPro_Core
+ * @author      SapientPro Team <info@sapient.pro >
+ * @copyright   Copyright © 2009-2019 SapientPro (https://sapient.pro)
+ */
+
+@font-face {
+    font-family: 'sapient';
+    src: url(../fonts/sapient-pro-icon/logo.ttf);
+}
+
+.admin__menu #menu-sapientpro-core-elements > a::before {
+    content: '\e900' !important;
+    font-family: 'sapient';
+    font-weight: 700;
+}
+
+.sapient_pro_logo {
+    position: relative;
+    padding-left: 25px;
+}
+
+.sapient_pro_logo::before {
+    position: absolute;
+    content: '\e900' !important;
+    font-family: 'sapient';
+    font-weight: 700;
+    font-size: 2.3rem;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+
+}

@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * SapientPro
+ *
+ * @category    SapientPro
+ * @package     SapientPro_Core
+ * @author      SapientPro Team <info@sapient.pro >
+ * @copyright   Copyright © 2009-2019 SapientPro (https://sapient.pro)
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="checkout" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <referenceBlock name="checkout.root">
+                <arguments>
+                    <argument name="jsLayout" xsi:type="array">
+                        <item name="components" xsi:type="array">
+                            <item name="checkout" xsi:type="array">
+                                <item name="children" xsi:type="array">
+                                    <item name="steps" xsi:type="array">
+                                        <item name="children" xsi:type="array">
+                                            <item name="shipping-step" xsi:type="array">
+                                                <item name="children" xsi:type="array">
+                                                    <item name="step-config" xsi:type="array">
+                                                        <item name="children" xsi:type="array">
+                                                            <item name="additional-login-config" xsi:type="array">
+                                                                <item name="sortOrder" xsi:type="string">0</item>
+                                                                <item name="config" xsi:type="array">
+                                                                    <item name="hookElements" xsi:type="array">
+                                                                        <!-- Hook Elements Example -->
+                                                                        <!-- <item name="[Element Name]" xsi:type="string">SapientPro_Core/[Path]/[Template Name]</item> -->
+                                                                    </item>
+                                                                </item>
+                                                                <item name="component" xsi:type="string">
+                                                                    SapientPro_Core/js/view/checkout/step/shipping/additional-login-config
+                                                                </item>
+                                                                <item name="children" xsi:type="array">
+                                                                    <!-- JavaScripts -->
+                                                                </item>
+                                                            </item>
+                                                        </item>
+                                                    </item>
+                                                </item>
+                                            </item>
+                                        </item>
+                                    </item>
+                                </item>
+                            </item>
+                        </item>
+                    </argument>
+                </arguments>
+            </referenceBlock>
+        </referenceContainer>
+    </body>
+</page>

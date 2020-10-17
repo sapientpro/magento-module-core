@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * SapientPro
+ *
+ * @category    SapientPro
+ * @package     SapientPro_Core
+ * @author      SapientPro Team <info@sapient.pro >
+ * @copyright   Copyright © 2009-2019 SapientPro (https://sapient.pro)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
+	<module name="SapientPro_Core" setup_version="1.0.0" active="true">
+	</module>
+</config>

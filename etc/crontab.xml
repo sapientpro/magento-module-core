@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * SapientPro
+ *
+ * @category    SapientPro
+ * @package     SapientPro_Core
+ * @author      SapientPro Team <info@sapient.pro >
+ * @copyright   Copyright © 2009-2019 SapientPro (https://sapient.pro)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="default">
+       <job name="notify_customer" instance="SapientPro\Core\Cron\Notify" method="execute">
+            <schedule>00 */3 * * *</schedule>
+        </job>
+    </group>
+</config>

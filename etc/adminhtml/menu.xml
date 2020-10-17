@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * SapientPro
+ *
+ * @category    SapientPro
+ * @package     SapientPro_Core
+ * @author      SapientPro Team <info@sapient.pro >
+ * @copyright   Copyright © 2009-2019 SapientPro (https://sapient.pro)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="SapientPro_Core::elements" title="SapientPro" module="SapientPro_Core" sortOrder="2000"
+             resource="SapientPro_Core::elements"/>
+        <add id="SapientPro_Core::promo" title="About Us" module="SapientPro_Core"
+             sortOrder="200" parent="SapientPro_Core::elements"
+             action="sapientpro/index"
+             resource="SapientPro_Core::index"/>
+        <add id="SapientPro_Core::solutions" title="Solutions" module="SapientPro_Core"
+             sortOrder="200" parent="SapientPro_Core::elements"
+             action="sapientpro/solutions"
+             resource="SapientPro_Core::solutions"/>
+    </menu>
+</config>
