@@ -11,77 +11,24 @@
 namespace SapientPro\Core\Cron;
 
 use Magento\Framework\Notification\NotifierInterface;
-use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\HTTP\ZendClientFactory;
 use Magento\Framework\Serialize\Serializer\Json;
-use SapientPro\Core\Logger\Handler;
+use Psr\Log\LoggerInterface;
 
-/**
- * Class Notify
- * @package SapientPro\Core\Cron
- */
 class Notify
 {
-    /**
-     * News Feed
-     */
-    const ENDPOINT = 'http://2020.sapient.tools/wp-json/myplugin/v1/magento-feed/';
+    const ENDPOINT = 'https://2020.sapient.tools/wp-json/myplugin/v1/magento-feed/';
 
-    /**
-     * @var NotifierInterface
-     */
-    protected $notifier;
-
-    /**
-     * @var ManagerInterface
-     */
-    protected $messageManager;
-
-    /**
-     * @var ZendClientFactory
-     */
-    private $httpClientFactory;
-
-    /**
-     * @var Json
-     */
-    private $jsonDecoder;
-
-    /**
-     * @var Logger
-     */
-    private $logger;
-
-    /**
-     * Notify constructor.
-     * @param NotifierInterface $notifier
-     * @param ManagerInterface $messageManager
-     * @param ZendClientFactory $httpClientFactory
-     * @param Json $jsonDecoder
-     * @param Handler $logger
-     */
     public function __construct(
-        NotifierInterface $notifier,
-        ManagerInterface $messageManager,
-        ZendClientFactory $httpClientFactory,
-        Json $jsonDecoder,
-        Handler $logger
-
-    )
-    {
-        $this->notifier = $notifier;
-        $this->messageManager = $messageManager;
-        $this->httpClientFactory = $httpClientFactory;
-        $this->jsonDecoder = $jsonDecoder;
-        $this->logger = $logger;
+        private readonly NotifierInterface $notifier,
+        private readonly ZendClientFactory $httpClientFactory,
+        private readonly Json              $jsonDecoder,
+        private readonly LoggerInterface   $logger
+    ) {
     }
 
-    /**
-     * Check news updates
-     */
-    public function execute()
+    public function execute(): void
     {
-        // Check updates
         try {
             $client = $this->httpClientFactory->create();
             $client->setUri(self::ENDPOINT . time());
@@ -124,7 +71,7 @@ class Notify
                 }
             }
         } catch (\Zend_Http_Client_Exception $exception) {
-            $this->logger->write($exception->getMessage());
+            $this->logger->alert($exception->getMessage());
         }
     }
 

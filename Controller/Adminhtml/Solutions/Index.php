@@ -10,32 +10,24 @@
 namespace SapientPro\Core\Controller\Adminhtml\Solutions;
 
 use Magento\Framework\App\Action\HttpGetActionInterface as HttpGetActionInterface;
+use Magento\Backend\App\Action\Context;
+use Magento\Framework\View\Result\PageFactory;
+use Magento\Backend\Model\View\Result\Page;
+use Magento\Marketplace\Controller\Adminhtml\Index as ControllerIndex;
 
-class Index extends \Magento\Marketplace\Controller\Adminhtml\Index
+class Index extends ControllerIndex
 {
-    /**
-     * @var \Magento\Framework\View\Result\PageFactory
-     */
-    protected $resultPageFactory;
-
-    /**
-     * @param \Magento\Backend\App\Action\Context $context
-     * @param \Magento\Framework\View\Result\PageFactory $resultPageFactory
-     */
     public function __construct(
-        \Magento\Backend\App\Action\Context $context,
-        \Magento\Framework\View\Result\PageFactory $resultPageFactory
+        Context $context,
+        private readonly PageFactory $resultPageFactory
     ) {
         parent::__construct($context);
-        $this->resultPageFactory = $resultPageFactory;
+
     }
 
-    /**
-     * @return \Magento\Backend\Model\View\Result\Page
-     */
-    public function execute()
+    public function execute(): Page
     {
-        /** @var \Magento\Backend\Model\View\Result\Page $resultPage */
+        /** @var Page $resultPage */
         $resultPage = $this->resultPageFactory->create();
         $resultPage->setActiveMenu('Magento_Marketplace::partners');
         $resultPage->addBreadcrumb(__('Partners'), __('Partners'));

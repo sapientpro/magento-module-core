@@ -16,31 +16,12 @@ use Magento\Framework\Stdlib\ArrayManager;
 
 class StoreConfigProcessor implements LayoutProcessorInterface
 {
-    /**
-     * @var ScopeConfigInterface
-     */
-    private $scopeConfig;
-
-    /**
-     * @var ArrayManager
-     */
-    private $arrayManager;
-
-    /**
-     * CheckoutConfigProvider constructor.
-     * @param ScopeConfigInterface $scopeConfig
-     * @param ArrayManager $arrayManager
-     */
-    public function __construct(ScopeConfigInterface $scopeConfig, ArrayManager $arrayManager)
-    {
-        $this->scopeConfig = $scopeConfig;
-        $this->arrayManager = $arrayManager;
+    public function __construct(
+        private readonly ScopeConfigInterface $scopeConfig,
+        private readonly ArrayManager $arrayManager
+    ) {
     }
 
-    /**
-     * @param array $jsLayout
-     * @return array
-     */
     public function process($jsLayout)
     {
         foreach ($this->arrayManager->findPaths('storeConfigData', $jsLayout) as $arrayPath) {

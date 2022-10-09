@@ -14,69 +14,28 @@ use Magento\Framework\DataObject;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use Magento\Customer\Helper\Session\CurrentCustomer as CurrentCustomerHelper;
 use Magento\Customer\Helper\View as CustomerViewHelper;
+use Magento\Customer\Api\Data\CustomerInterface;
 
-/**
- * Product breadcrumbs view model.
- */
 class CurrentCustomer extends DataObject implements ArgumentInterface
 {
-    /**
-     * @var CurrentCustomerHelper
-     */
-    private $currentCustomer;
-
-    /**
-     * @var CustomerViewHelper
-     */
-    private $helperView;
-
-    /**
-     * @param CurrentCustomerHelper $currentCustomer
-     * @param CustomerViewHelper $helperView
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
     public function __construct(
-        CurrentCustomerHelper $currentCustomer,
-        CustomerViewHelper $helperView
+        private readonly CurrentCustomerHelper $currentCustomer,
+        private readonly CustomerViewHelper $helperView
     ) {
-        $this->currentCustomer = $currentCustomer;
-        $this->helperView = $helperView;
     }
 
-    /**
-     * Returns the Magento Customer Model for this block
-     *
-     * @return \Magento\Customer\Api\Data\CustomerInterface|null
-     */
-    public function getCustomer()
+    public function getCustomer(): CustomerInterface
     {
         return $this->currentCustomer->getCustomer();
     }
 
-    /**
-     * Get the full name of a customer
-     *
-     * @return string full name
-     */
-    public function getName()
+    public function getName(): array|string
     {
         return $this->helperView->getCustomerName($this->getCustomer());
     }
 
-    /**
-     * @return string
-     */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->getCustomer()->getEmail();
     }
-
-    /**
-     * @return string
-     */
-    public function getChangePasswordUrl()
-    {
-        return $this->urlBuilder->getUrl('customer/account/edit/changepass/1');
-    }
-
 }

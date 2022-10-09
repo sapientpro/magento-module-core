@@ -14,39 +14,20 @@ use Magento\Framework\DataObject;
 use Magento\Framework\View\Element\Block\ArgumentInterface;
 use \Magento\Framework\Locale\ResolverInterface as LocaleResolverInterface;
 
-/**
- *  Locale view model.
- */
 class Locale extends DataObject implements ArgumentInterface
 {
-    /**
-     * @var LocaleResolverInterface
-     */
-    private $localeResolver;
-
-    /**
-     * @param LocaleResolverInterface $localeResolver
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function __construct(LocaleResolverInterface $localeResolver)
-    {
-        $this->localeResolver = $localeResolver;
+    public function __construct(
+        private readonly LocaleResolverInterface $localeResolver
+    ) {
     }
 
-    /**
-     * @return string
-     */
-    public function getDefaultLocale()
+    public function getDefaultLocale(): string
     {
         return $this->localeResolver->getDefaultLocale();
     }
 
-    /**
-     * @return mixed
-     */
-    public function getLocaleCode()
+    public function getLocaleCode(): string
     {
         return $this->localeResolver->getLocale();
     }
-
 }
