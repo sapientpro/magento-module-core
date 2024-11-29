@@ -1,14 +1,4 @@
 <?xml version="1.0"?>
-<!--
-/**
- * SapientPro
- *
- * @category    SapientPro
- * @package     SapientPro_Core
- * @author      SapientPro Team <info@sapient.pro >
- * @copyright   Copyright © 2009-2019 SapientPro (https://sapient.pro)
- */
--->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <update handle="styles"/>
     <head>

@@ -1,12 +1,4 @@
 <?php
-/**
- * SapientPro
- *
- * @category    SapientPro
- * @package     SapientPro_Core
- * @author      SapientPro Team <info@sapient.pro >
- * @copyright   Copyright © 2009-2019 SapientPro (https://sapient.pro)
- */
 
 namespace SapientPro\Core\Logger;
 

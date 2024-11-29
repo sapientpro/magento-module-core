@@ -11,8 +11,4 @@
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <preference for="Magento\Framework\Setup\FilePermissions" type="SapientPro\Facebook\Service\Facebook" />
-    <!--<type name="Magento\Framework\Setup\FilePermissions">-->
-        <!--<plugin name="SapientPro" type="{PluginClassName}" sortOrder="1" disabled="false" />-->
-    <!--</type>-->
 </config>
