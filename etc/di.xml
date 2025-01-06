@@ -3,6 +3,6 @@
         xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="SapientPro\Core\Api\Report\Data\SalesReportInterface"
                 type="SapientPro\Core\Model\Report\SalesReport"/>
-    <preference for="SapientPro\Core\Api\Report\SalesReportGeneratorInterface"
-                type="SapientPro\Core\Service\Report\SalesReportGenerator"/>
+    <preference for="SapientPro\Core\Api\Report\SalesReportProviderInterface"
+                type="SapientPro\Core\Service\Report\SalesReportProvider"/>
 </config>

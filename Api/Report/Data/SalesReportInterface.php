@@ -2,10 +2,28 @@
 
 namespace SapientPro\Core\Api\Report\Data;
 
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use DateTime;
 
 interface SalesReportInterface
 {
+    public const TITLE = 'title';
+
+    public const TOTAL = 'total';
+
+    public const DEBIT = 'debit';
+
+    public const CREDIT = 'credit';
+
+    public const SOURCES = 'sources';
+
+    public const DATE_FROM = 'date_from';
+
+    public const DATE_TO = 'date_to';
+
+    public function getId();
+
+    public function setId($id);
+
     /**
      * @return string
      */
@@ -13,7 +31,6 @@ interface SalesReportInterface
 
     /**
      * @param string $title
-     * @return string
      */
     public function setTitle(string $title): void;
 
@@ -23,10 +40,68 @@ interface SalesReportInterface
     public function getTotal(): float;
 
     /**
-     * @param float $total
+     * @param float $value
      * @return void
      */
-    public function setTotal(float $total): void;
+    public function setTotal(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function increaseTotal(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function decreaseTotal(float $value): void;
+
+    /**
+     * @return float
+     */
+    public function getDebit(): float;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function setDebit(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function increaseDebit(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function decreaseDebit(float $value): void;
+
+    /**
+     * @return float
+     */
+    public function getCredit(): float;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function setCredit(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function increaseCredit(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function decreaseCredit(float $value): void;
 
     /**
      * @return array
@@ -40,24 +115,24 @@ interface SalesReportInterface
     public function setSources(array $sources): void;
 
     /**
-     * @return TimezoneInterface
+     * @return DateTime
      */
-    public function getDateFrom(): TimezoneInterface;
+    public function getDateFrom(): DateTime;
 
     /**
-     * @param TimezoneInterface $dateFrom
+     * @param DateTime $dateFrom
      * @return void
      */
-    public function setDateFrom(TimezoneInterface $dateFrom): void;
+    public function setDateFrom(DateTime $dateFrom): void;
 
     /**
-     * @return TimezoneInterface
+     * @return DateTime
      */
-    public function getDateTo(): TimezoneInterface;
+    public function getDateTo(): DateTime;
 
     /**
-     * @param TimezoneInterface $dateTo
+     * @param DateTime $dateTo
      * @return void
      */
-    public function setDateTo(TimezoneInterface $dateTo): void;
+    public function setDateTo(DateTime $dateTo): void;
 }

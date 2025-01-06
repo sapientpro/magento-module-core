@@ -2,30 +2,26 @@
 
 namespace SapientPro\Core\Model\Report;
 
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use DateTime;
 use SapientPro\Core\Api\Report\Data\SalesReportInterface;
-use Magento\Framework\DataObject;
+use Magento\Framework\Model\AbstractModel;
 
-class SalesReport extends DataObject implements SalesReportInterface
+class SalesReport extends AbstractModel implements SalesReportInterface
 {
-    private string $title = '';
-
-    private float $total = 0.0;
-
-    private array $sources = [];
-
-    private TimezoneInterface $dateFrom;
-
-    private TimezoneInterface $dateTo;
-
+    /**
+     * @inherit
+     */
     public function getTitle(): string
     {
-        return $this->title;
+        return $this->getData(SalesReportInterface::TITLE) ?? '';
     }
 
+    /**
+     * @inherit
+     */
     public function setTitle(string $title): void
     {
-        $this->title = $title;
+        $this->setData(SalesReportInterface::TITLE, $title);
     }
 
     /**
@@ -33,15 +29,33 @@ class SalesReport extends DataObject implements SalesReportInterface
      */
     public function getTotal(): float
     {
-        return $this->total;
+        return $this->getData(SalesReportInterface::TOTAL) ?? 0;
     }
 
     /**
      * @inherit
      */
-    public function setTotal(float $total): void
+    public function setTotal(float $value): void
     {
-        $this->total = $total;
+        $this->setData(SalesReportInterface::TOTAL, $value);
+    }
+
+    /**
+     * @inherit
+     */
+    public function increaseTotal(float $value): void
+    {
+        $value = $this->getData(SalesReportInterface::TOTAL) + $value;
+        $this->setData(SalesReportInterface::TOTAL, $value);
+    }
+
+    /**
+     * @inherit
+     */
+    public function decreaseTotal(float $value): void
+    {
+        $value = $this->getData(SalesReportInterface::TOTAL) - $value;
+        $this->setData(SalesReportInterface::TOTAL, $value);
     }
 
     /**
@@ -49,7 +63,7 @@ class SalesReport extends DataObject implements SalesReportInterface
      */
     public function getSources(): array
     {
-        return $this->sources;
+        return $this->getData(SalesReportInterface::SOURCES);
     }
 
     /**
@@ -57,38 +71,102 @@ class SalesReport extends DataObject implements SalesReportInterface
      */
     public function setSources(array $sources): void
     {
-        $this->sources = $sources;
+        $this->setData(SalesReportInterface::SOURCES, $sources);
     }
 
     /**
      * @inherit
      */
-    public function getDateFrom(): TimezoneInterface
+    public function getDateFrom(): \DateTime
     {
-        return $this->dateFrom;
+        return $this->getData(SalesReportInterface::DATE_FROM);
     }
 
     /**
      * @inherit
      */
-    public function setDateFrom(TimezoneInterface $dateFrom): void
+    public function setDateFrom(DateTime $dateFrom): void
     {
-        $this->dateFrom = $dateFrom;
+        $this->setData(SalesReportInterface::DATE_FROM, $dateFrom);
     }
 
     /**
      * @inherit
      */
-    public function getDateTo(): TimezoneInterface
+    public function getDateTo(): DateTime
     {
-        return $this->dateTo;
+        return $this->getData(SalesReportInterface::DATE_TO);
     }
 
     /**
      * @inherit
      */
-    public function setDateTo(TimezoneInterface $dateTo): void
+    public function setDateTo(DateTime $dateTo): void
     {
-        $this->dateTo = $dateTo;
+        $this->setData(SalesReportInterface::DATE_TO, $dateTo);
+    }
+
+    /**
+     * @inherit
+     */
+    public function getDebit(): float
+    {
+        return $this->getData(SalesReportInterface::DEBIT);
+    }
+
+    /**
+     * @inherit
+     */
+    public function setDebit(float $value): void
+    {
+        $this->setData(SalesReportInterface::DEBIT, $value);
+    }
+
+    /**
+     * @inherit
+     */
+    public function increaseDebit(float $value): void
+    {
+        $this->setData(SalesReportInterface::DEBIT, $this->getData('SalesReportInterface::DEBIT') + $value);
+    }
+
+    /**
+     * @inherit
+     */
+    public function decreaseDebit(float $value): void
+    {
+        $this->setData(SalesReportInterface::DEBIT, $this->getData(SalesReportInterface::DEBIT) - $value);
+    }
+
+    /**
+     * @inherit
+     */
+    public function getCredit(): float
+    {
+        return $this->getData(SalesReportInterface::CREDIT) ?? 0;
+    }
+
+    /**
+     * @inherit
+     */
+    public function setCredit(float $value): void
+    {
+        $this->setData(SalesReportInterface::CREDIT, $value);
+    }
+
+    /**
+     * @inherit
+     */
+    public function increaseCredit(float $value): void
+    {
+        $this->setData(SalesReportInterface::CREDIT, $this->getData(SalesReportInterface::CREDIT) + $value);
+    }
+
+    /**
+     * @inherit
+     */
+    public function decreaseCredit(float $value): void
+    {
+        $this->setData(SalesReportInterface::CREDIT, $this->getData(SalesReportInterface::CREDIT) - $value);
     }
 }
