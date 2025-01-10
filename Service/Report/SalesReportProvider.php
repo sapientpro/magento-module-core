@@ -5,6 +5,7 @@ namespace SapientPro\Core\Service\Report;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\CollectionFactory;
 use Magento\Framework\Data\Collection\ModelFactory;
+use Magento\Framework\Exception\LocalizedException;
 use SapientPro\Core\Api\Report\Data\SalesReportInterface;
 use SapientPro\Core\Api\Report\SalesReportProviderInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -12,6 +13,8 @@ use Magento\Framework\Api\FilterBuilder;
 use Magento\Sales\Api\InvoiceRepositoryInterfaceFactory;
 use Magento\Sales\Api\CreditmemoRepositoryInterfaceFactory;
 use Magento\Framework\Api\SearchCriteria;
+use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
+use DateMalformedStringException;
 use DateTime;
 use Exception;
 
@@ -29,13 +32,16 @@ class SalesReportProvider implements SalesReportProviderInterface
 
     private ModelFactory $modelFactory;
 
+    private TimezoneInterface $timezone;
+
     public function __construct(
         CollectionFactory $collectionFactory,
         InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory,
         CreditmemoRepositoryInterfaceFactory $creditmemoCollectionFactory,
         SearchCriteriaBuilder $searchCriteriaBuilder,
         ModelFactory $modelFactory,
-        FilterBuilder $filterBuilder
+        FilterBuilder $filterBuilder,
+        TimezoneInterface $timezone
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->invoiceCollectionFactory = $invoiceCollectionFactory;
@@ -43,6 +49,43 @@ class SalesReportProvider implements SalesReportProviderInterface
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->modelFactory = $modelFactory;
         $this->filterBuilder = $filterBuilder;
+        $this->timezone = $timezone;
+    }
+
+    /**
+     * @throws LocalizedException
+     */
+    public function preparePaymentRefundOrders(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
+    {
+        $collectOrders = [];
+        /** @var Collection $collection */
+        $collection = $this->collectionFactory->create();
+
+
+        $invoiceCollection = $this->invoiceCollectionFactory->create();
+        $refundCollection = $this->creditmemoCollectionFactory->create();
+
+        $searchCriteriaBuilder = $this->prepareDateRangeSearchCriteria($dateFrom, $dateTo);
+        $result = $invoiceCollection->getList($searchCriteriaBuilder);
+
+        /** @var SalesReportInterface $item */
+        foreach ($result->getItems() as $item) {
+            if (!isset($collectOrders[$item->getOrder()->getId()])) {
+                $collectOrders[$item->getOrder()->getId()] = true;
+                $collection->addItem($item->getOrder());
+            }
+        }
+
+        $result = $refundCollection->getList($searchCriteriaBuilder);
+        /** @var SalesReportInterface $item */
+        foreach ($result->getItems() as $item) {
+            if (!isset($collectOrders[$item->getOrder()->getId()])) {
+                $collectOrders[$item->getOrder()->getId()] = true;
+                $collection->addItem($item->getOrder());
+            }
+        }
+
+        return $collection;
     }
 
     /**
@@ -82,7 +125,8 @@ class SalesReportProvider implements SalesReportProviderInterface
 
             $reportItem->setTitle($item->getTitle());
             $reportItem->increaseCredit($item->getTotal());
-            $reportItem->decreaseTotal($item->getTotal());
+            // => increaseTotal Because $item->getTotal() returns a negative value
+            $reportItem->increaseTotal($item->getTotal());
         }
 
         return $collection;
@@ -94,6 +138,7 @@ class SalesReportProvider implements SalesReportProviderInterface
      * @param DateTime|null $dateFrom
      * @param DateTime|null $dateTo
      * @return Collection
+     * @throws LocalizedException
      */
     public function prepareSalesReportData(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
     {
@@ -135,6 +180,7 @@ class SalesReportProvider implements SalesReportProviderInterface
      * @param DateTime|null $dateFrom
      * @param DateTime|null $dateTo
      * @return Collection
+     * @throws LocalizedException
      */
     public function prepareRefundReportData(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
     {
@@ -176,28 +222,24 @@ class SalesReportProvider implements SalesReportProviderInterface
      * @param DateTime|null $dateFrom
      * @param DateTime|null $dateTo
      * @return SearchCriteria
+     * @throws DateMalformedStringException
      */
     private function prepareDateRangeSearchCriteria(DateTime $dateFrom = null, DateTime $dateTo = null): SearchCriteria
     {
-        $filters = [];
-        if ($dateFrom) {
-            $filters[] = $this->filterBuilder
-                ->setField('created_at')
-                ->setConditionType('gteq')
-                ->setValue($dateFrom->format('Y-m-d H:i:s'))
-                ->create();
+        if (!$dateTo) {
+            $dateTo = $this->timezone->date();
+            $dateTo->modify('-1 year');
         }
 
-        if ($dateTo) {
-            $filters[] = $this->filterBuilder
-                ->setField('created_at')
-                ->setConditionType('lteq')
-                ->setValue($dateFrom->format('Y-m-d H:i:s'))
+        if ($dateFrom) {
+            return $this->searchCriteriaBuilder
+                ->addFilter('created_at', $dateFrom->format('Y-m-d H:i:s'), 'gt')
+                ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'lt')
                 ->create();
         }
 
         return $this->searchCriteriaBuilder
-            ->addFilters($filters)
+            ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'gt')
             ->create();
     }
 }
