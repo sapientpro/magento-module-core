@@ -1,0 +1,20 @@
+{
+    "sales_order": {
+        "column": {
+            "cashier_id": true,
+            "packer_id": true
+        }
+    },
+    "sales_order_grid": {
+        "column": {
+            "cashier_id": true,
+            "packer_id": true
+        }
+    },
+    "quote": {
+        "column": {
+            "packer_id": true,
+            "cashier_id": true
+        }
+    }
+}

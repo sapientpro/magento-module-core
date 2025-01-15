@@ -1,0 +1,15 @@
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="sales_order" resource="default" engine="innodb" comment="sales order table">
+        <column xsi:type="int" name="cashier_id" unsigned="true" nullable="true" identity="false"/>
+        <column xsi:type="int" name="packer_id" unsigned="true" nullable="true" identity="false"/>
+    </table>
+    <table name="sales_order_grid" resource="default" engine="innodb" comment="sales_order_grid Table">
+        <column xsi:type="int" name="cashier_id" unsigned="true" nullable="true" identity="false"/>
+        <column xsi:type="int" name="packer_id" unsigned="true" nullable="true" identity="false"/>
+    </table>
+    <table name="quote" resource="default" engine="innodb" comment="quote Table">
+        <column xsi:type="int" name="packer_id" unsigned="true" nullable="true" identity="false"/>
+        <column xsi:type="int" name="cashier_id" unsigned="true" nullable="true" identity="false"/>
+    </table>
+</schema>
