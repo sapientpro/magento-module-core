@@ -3,7 +3,7 @@
     "description": "SapientPro Core",
     "type": "magento2-module",
     "version": "1.2.0",
-    "license": "https://sapient.pro/docs/pos-magento",
+    "license": "proprietary",
     "authors": [
         {
             "name": "SapientPro",
@@ -15,7 +15,7 @@
         "sort-packages": true
     },
     "require": {
-        "php": ">=8.1"
+        "php": ">=7.4"
     },
     "autoload": {
         "files": [

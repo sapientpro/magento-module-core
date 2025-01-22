@@ -17,14 +17,31 @@ use Magento\Marketplace\Controller\Adminhtml\Index as ControllerIndex;
 
 class Index extends ControllerIndex
 {
+    /**
+     * @var PageFactory
+     */
+    private PageFactory $resultPageFactory;
+
+    /**
+     * Constructor Partners Page
+     *
+     * @param Context $context
+     * @param PageFactory $resultPageFactory
+     */
     public function __construct(
         Context $context,
-        private readonly PageFactory $resultPageFactory
+        PageFactory $resultPageFactory
     ) {
+        $this->resultPageFactory = $resultPageFactory;
         parent::__construct($context);
 
     }
 
+    /**
+     * Action for Partners page
+     *
+     * @return Page
+     */
     public function execute(): Page
     {
         /** @var Page $resultPage */

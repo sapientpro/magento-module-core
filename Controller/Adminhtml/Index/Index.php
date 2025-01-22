@@ -15,13 +15,24 @@ use Magento\Backend\Model\View\Result\Page;
 
 class Index extends \Magento\Marketplace\Controller\Adminhtml\Index
 {
+    /**
+     * @var PageFactory
+     */
+    private PageFactory $resultPageFactory;
+
     public function __construct(
         Context $context,
-        private readonly PageFactory $resultPageFactory
+        PageFactory $resultPageFactory
     ) {
+        $this->resultPageFactory = $resultPageFactory;
         parent::__construct($context);
     }
 
+    /**
+     * Action for Partners page
+     *
+     * @return Page
+     */
     public function execute(): Page
     {
         /** @var Page $resultPage */

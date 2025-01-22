@@ -30,6 +30,12 @@ class AccessKey extends Field
         return $html;
     }
 
+    /**
+     * Render block HTML
+     *
+     * @param AbstractElement $element
+     * @return string
+     */
     protected function _getElementHtml(AbstractElement $element): string
     {
         return $this->_toHtml();
