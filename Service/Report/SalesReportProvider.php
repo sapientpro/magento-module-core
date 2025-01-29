@@ -6,6 +6,7 @@ use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\CollectionFactory;
 use Magento\Framework\Data\Collection\ModelFactory;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Sales\Api\Data\OrderInterface;
 use SapientPro\Core\Api\Report\Data\SalesReportInterface;
 use SapientPro\Core\Api\Report\SalesReportProviderInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
@@ -34,6 +35,24 @@ class SalesReportProvider implements SalesReportProviderInterface
 
     private TimezoneInterface $timezone;
 
+    private array $orderFilters = [
+        'customer_id' => null,
+        'cashier_id' => null,
+        'packer_id' => null,
+        'pos_source' => null,
+    ];
+
+    /**
+     * Sales Report Provider Constructor
+     *
+     * @param CollectionFactory $collectionFactory
+     * @param InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory
+     * @param CreditmemoRepositoryInterfaceFactory $creditmemoCollectionFactory
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param ModelFactory $modelFactory
+     * @param FilterBuilder $filterBuilder
+     * @param TimezoneInterface $timezone
+     */
     public function __construct(
         CollectionFactory $collectionFactory,
         InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory,
@@ -50,6 +69,50 @@ class SalesReportProvider implements SalesReportProviderInterface
         $this->modelFactory = $modelFactory;
         $this->filterBuilder = $filterBuilder;
         $this->timezone = $timezone;
+    }
+
+    /**
+     * Add filter by customer id
+     *
+     * @param int $customerId
+     * @return void
+     */
+    public function addCustomerFilter(int $customerId): void
+    {
+        $this->orderFilters['customer_id'] = $customerId;
+    }
+
+    /**
+     * Add filter by cashier
+     *
+     * @param int $cashierId
+     * @return void
+     */
+    public function addCashierFilter(int $cashierId): void
+    {
+        $this->orderFilters['cashier_id'] = $cashierId;
+    }
+
+    /**
+     * Add filter by packer
+     *
+     * @param int $packerId
+     * @return void
+     */
+    public function addPackerFilter(int $packerId): void
+    {
+        $this->orderFilters['packer_id'] = $packerId;
+    }
+
+    /**
+     * Add filter by source
+     *
+     * @param string $sourceId
+     * @return void
+     */
+    public function addSourceFilter(string $sourceId): void
+    {
+        $this->orderFilters['pos_source'] = $sourceId;
     }
 
     /**
@@ -89,6 +152,8 @@ class SalesReportProvider implements SalesReportProviderInterface
     }
 
     /**
+     * Preparation of data on orders for which payment has been made or funds have been refunded
+     *
      * @throws Exception
      */
     public function preparePaymentRefundReportData(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
@@ -152,6 +217,11 @@ class SalesReportProvider implements SalesReportProviderInterface
 
         foreach ($invoices->getItems() as $invoice) {
             $order = $invoice->getOrder();
+
+            if ($this->checkOrderFilters($order)) {
+                continue;
+            }
+
             $payment = $order->getPayment();
             $paymentCode = $payment->getMethodInstance()->getCode();
             $paymentTitle = $payment->getMethodInstance()->getTitle();
@@ -194,6 +264,11 @@ class SalesReportProvider implements SalesReportProviderInterface
 
         foreach ($invoices->getItems() as $creditMemo) {
             $order = $creditMemo->getOrder();
+
+            if ($this->checkOrderFilters($order)) {
+                continue;
+            }
+
             $payment = $order->getPayment();
             $paymentCode = $payment->getMethodInstance()->getCode();
             $paymentTitle = $payment->getMethodInstance()->getTitle();
@@ -216,6 +291,26 @@ class SalesReportProvider implements SalesReportProviderInterface
         return $collection;
     }
 
+
+    /**
+     * Check all filters by order
+     *
+     * @param OrderInterface $order
+     * @return bool
+     */
+    private function checkOrderFilters(OrderInterface $order): bool
+    {
+        foreach ($this->orderFilters as $property => $value) {
+            if ($value !== null) {
+                if ($order->getData($property) == $value) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Prepare search criteria for date range
      *
@@ -232,14 +327,12 @@ class SalesReportProvider implements SalesReportProviderInterface
         }
 
         if ($dateFrom) {
-            return $this->searchCriteriaBuilder
-                ->addFilter('created_at', $dateFrom->format('Y-m-d H:i:s'), 'gt')
-                ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'lt')
-                ->create();
+            $this->searchCriteriaBuilder
+                ->addFilter('created_at', $dateFrom->format('Y-m-d H:i:s'), 'gt');
         }
 
         return $this->searchCriteriaBuilder
-            ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'gt')
+            ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'lt')
             ->create();
     }
 }
