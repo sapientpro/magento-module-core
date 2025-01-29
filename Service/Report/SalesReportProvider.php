@@ -328,11 +328,11 @@ class SalesReportProvider implements SalesReportProviderInterface
 
         if ($dateFrom) {
             $this->searchCriteriaBuilder
-                ->addFilter('created_at', $dateFrom->format('Y-m-d H:i:s'), 'gt');
+                ->addFilter('created_at', $dateFrom->format('Y-m-d H:i:s'), 'lt');
         }
 
         return $this->searchCriteriaBuilder
-            ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'lt')
+            ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'gt')
             ->create();
     }
 }
