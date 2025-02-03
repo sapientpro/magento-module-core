@@ -5,4 +5,12 @@
                 type="SapientPro\Core\Model\Report\SalesReport"/>
     <preference for="SapientPro\Core\Api\Report\SalesReportProviderInterface"
                 type="SapientPro\Core\Service\Report\SalesReportProvider"/>
+    <type name="SapientPro\Core\Api\Report\FundsInflowReportGeneratorsInterface">
+        <arguments>
+            <argument name="services" xsi:type="array">
+                <item name="invoices" xsi:type="object">Vendor\Module\Model\CustomServiceA</item>
+                <item name="refaunds" xsi:type="object">Vendor\Module\Model\CustomServiceB</item>
+            </argument>
+        </arguments>
+    </type>
 </config>

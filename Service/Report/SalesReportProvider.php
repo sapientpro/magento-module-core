@@ -8,7 +8,6 @@ use Magento\Framework\Data\Collection\ModelFactory;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
 use SapientPro\Core\Api\Report\Data\SalesReportInterface;
-use SapientPro\Core\Api\Report\SalesReportProviderInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\FilterBuilder;
 use Magento\Sales\Api\InvoiceRepositoryInterfaceFactory;
@@ -19,7 +18,7 @@ use DateMalformedStringException;
 use DateTime;
 use Exception;
 
-class SalesReportProvider implements SalesReportProviderInterface
+class SalesReportProvider
 {
     private CollectionFactory $collectionFactory;
 
@@ -323,16 +322,17 @@ class SalesReportProvider implements SalesReportProviderInterface
     {
         if (!$dateTo) {
             $dateTo = $this->timezone->date();
-            $dateTo->modify('-1 year');
         }
 
-        if ($dateFrom) {
-            $this->searchCriteriaBuilder
-                ->addFilter('created_at', $dateFrom->format('Y-m-d H:i:s'), 'lt');
+        if (!$dateFrom) {
+            $dateFrom = clone $dateTo;
+            $dateFrom->modify('-1 year');
         }
 
-        return $this->searchCriteriaBuilder
-            ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'gt')
-            ->create();
+        $this->searchCriteriaBuilder
+            ->addFilter('created_at', $dateFrom->format('Y-m-d H:i:s'), 'gteq')
+            ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'lteq');
+
+        return $this->searchCriteriaBuilder->create();
     }
 }
