@@ -107,7 +107,14 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
 
             /** @var SalesReportInterface $item */
             foreach ($result->getItems() as $item) {
-                $collection->addItem($item);
+                /** @var SalesReportInterface $report */
+                $report = $collection->getItemById($item->getId());
+                if ($report) {
+                    $report->increaseTotal($item->getTotal());
+                    $report->increaseCredit($item->getCredit());
+                } else {
+                    $collection->addItem($item);
+                }
             }
         }
 

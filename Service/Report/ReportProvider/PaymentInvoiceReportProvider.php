@@ -70,7 +70,6 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
      */
     public function execute(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
     {
-        $collectByPaymentTypes = [];
         $collection = $this->collectionFactory->create();
         $invoiceCollection = $this->invoiceCollectionFactory->create();
 
@@ -90,9 +89,7 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
             $paymentTitle = $payment->getMethodInstance()->getTitle();
 
             /** @var SalesReportInterface $reportItem */
-            if (isset($collectByPaymentTypes[$paymentCode])) {
-                $reportItem = $collectByPaymentTypes[$paymentCode];
-            } else {
+            if (!$collection->getItemById($paymentCode)) {
                 $reportItem = $this->modelFactory->create(SalesReportInterface::class);
                 $reportItem->setId($paymentCode);
                 $reportItem->setTitle($paymentTitle);

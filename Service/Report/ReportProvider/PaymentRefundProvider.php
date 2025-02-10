@@ -63,7 +63,6 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
 
     public function execute(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
     {
-        $collectByPaymentTypes = [];
         $collection = $this->collectionFactory->create();
         $creditMemoCollection = $this->creditmemoCollectionFactory->create();
 
@@ -83,9 +82,7 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
             $paymentTitle = $payment->getMethodInstance()->getTitle();
 
             /** @var SalesReportInterface $reportItem */
-            if (isset($collectByPaymentTypes[$paymentCode])) {
-                $reportItem = $collectByPaymentTypes[$paymentCode];
-            } else {
+            if (!$collection->getItemById($paymentCode)) {
                 $reportItem = $this->modelFactory->create(SalesReportInterface::class);
                 $reportItem->setId($paymentCode);
                 $reportItem->setTitle($paymentTitle);
