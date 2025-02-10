@@ -127,7 +127,7 @@ class SalesReport extends AbstractModel implements SalesReportInterface
      */
     public function increaseDebit(float $value): void
     {
-        $this->setData(SalesReportInterface::DEBIT, $this->getData('SalesReportInterface::DEBIT') + $value);
+        $this->setData(SalesReportInterface::DEBIT, $this->getData(SalesReportInterface::DEBIT) + $value);
     }
 
     /**

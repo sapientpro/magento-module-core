@@ -1,11 +1,13 @@
 <?php
 
-namespace SapientPro\Core\Api\Report;
+namespace SapientPro\Core\Api\Report\ReportProvider;
 
 use Magento\Framework\Data\Collection;
 use DateTime;
 
-interface FundsInflowReportGeneratorsInterface
+interface ReportProviderInterface
 {
+    public function setFilters(array $filters): void;
+
     public function execute(DateTime $dateFrom = null, DateTime $dateTo = null): Collection;
 }

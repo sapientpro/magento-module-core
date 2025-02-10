@@ -5,11 +5,19 @@
                 type="SapientPro\Core\Model\Report\SalesReport"/>
     <preference for="SapientPro\Core\Api\Report\SalesReportProviderInterface"
                 type="SapientPro\Core\Service\Report\SalesReportProvider"/>
+    <preference for="SapientPro\Core\Api\Report\FundsInflowReportGeneratorsInterface"
+                type="SapientPro\Core\Service\Report\FundsInflowReportGenerators"/>
     <type name="SapientPro\Core\Api\Report\FundsInflowReportGeneratorsInterface">
         <arguments>
-            <argument name="services" xsi:type="array">
-                <item name="invoices" xsi:type="object">Vendor\Module\Model\CustomServiceA</item>
-                <item name="refaunds" xsi:type="object">Vendor\Module\Model\CustomServiceB</item>
+            <argument name="collectionFactory" xsi:type="object">
+                Magento\Framework\Data\CollectionFactory
+            </argument>
+            <argument name="modelFactory" xsi:type="object">
+                Magento\Framework\Data\Collection\ModelFactory
+            </argument>
+            <argument name="providers" xsi:type="array">
+                <item name="paymentInvoiceReportProvider" xsi:type="object">SapientPro\Core\Service\Report\ReportProvider\PaymentInvoiceReportProvider</item>
+                <item name="paymentRefundProvider" xsi:type="object">SapientPro\Core\Service\Report\ReportProvider\PaymentRefundProvider</item>
             </argument>
         </arguments>
     </type>
