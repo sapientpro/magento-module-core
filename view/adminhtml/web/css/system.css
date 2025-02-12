@@ -1,0 +1,10 @@
+.admin__page-sapientpro-tab .title:before {
+    content: '';
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    background: url('../images/logo.svg') no-repeat center center;
+    background-size: contain;
+    margin-right: 5px;
+    vertical-align: middle;
+}
