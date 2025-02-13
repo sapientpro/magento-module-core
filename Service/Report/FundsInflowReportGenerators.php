@@ -120,4 +120,13 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
 
         return $collection;
     }
+
+    private function setFiltersToProvider(): void
+    {
+        foreach ($this->orderFilters as $key => $value) {
+            if ($value !== null) {
+                $this->orderFilters[$key] = $value;
+            }
+        }
+    }
 }

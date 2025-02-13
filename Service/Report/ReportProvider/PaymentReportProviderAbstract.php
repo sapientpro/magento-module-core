@@ -54,14 +54,35 @@ abstract class PaymentReportProviderAbstract
      */
     protected function checkOrderFilters(OrderInterface $order): bool
     {
+        $filterStatuses = [];
         foreach ($this->orderFilters as $property => $value) {
             if ($value !== null) {
-                if ($order->getData($property) == $value) {
-                    return false;
-                }
+                $filterStatuses[$property] = ($order->getData($property) == $value);
             }
         }
 
-        return true;
+        foreach ($filterStatuses as $property => $value) {
+            if ($value) {
+                $filterStatuses[$property] = ($order->getData($property) == $value);
+            }
+        }
+
+        if (count($filterStatuses) === 0) {
+            return true;
+        }
+
+        return $this->allTrue($filterStatuses);
+    }
+
+    /**
+     * Check all filters by order
+     *
+     * @param array $arr
+     * @return bool
+     */
+    protected function allTrue(array $arr): bool {
+        return array_reduce($arr, function($carry, $item) {
+            return $carry && $item;
+        }, true);
     }
 }

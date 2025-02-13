@@ -1,0 +1,4 @@
+"Not enough quantity in the source.","Not enough quantity in the source, please check the quantity or allow remove qty from default source and try again",module,SapientPro_PointOfSale
+"The invoice can't be saved at this time.","The invoice can\'t be saved at this time. Please try again later."
+"The invoice can't be created without products.","The invoice can't be created without products. Add products and try again."
+"If stock is low or source is unavailable", "If stock is low or source is unavailable, quantity will be adjusted from the default source."

@@ -73,7 +73,7 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
         foreach ($invoices->getItems() as $creditMemo) {
             $order = $creditMemo->getOrder();
 
-            if ($this->checkOrderFilters($order)) {
+            if (!$this->checkOrderFilters($order)) {
                 continue;
             }
 

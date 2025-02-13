@@ -12,11 +12,11 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Customer\Model\Customer;
 use Magento\Eav\Model\Entity\Attribute\Set;
 use Magento\Framework\Setup\Patch\PatchRevertableInterface;
-use SapientPro\PointOfSale\Model\Attribute\Source\PosSource;
+use Magento\Eav\Model\Entity\Attribute\Source\Boolean;
 
-class AddPinnedPosAllowedSourcesAttribute implements DataPatchInterface, PatchRevertableInterface
+class AddCustomerSupervisorAttribute implements DataPatchInterface, PatchRevertableInterface
 {
-    public const ATTRIBUTE_CODE = 'allowed_pos_sources';
+    public const ATTRIBUTE_CODE = 'is_supervisor';
 
     /**
      * @var ModuleDataSetupInterface
@@ -39,7 +39,7 @@ class AddPinnedPosAllowedSourcesAttribute implements DataPatchInterface, PatchRe
     private SetFactory $attributeSetFactory;
 
     /**
-     * AddPinnedPosSourceAttribute constructor.
+     * AddAllowPosTerminalAttribute constructor.
      *
      * @param ModuleDataSetupInterface $moduleDataSetup
      * @param EavSetupFactory $eavSetupFactory
@@ -59,7 +59,7 @@ class AddPinnedPosAllowedSourcesAttribute implements DataPatchInterface, PatchRe
     }
 
     /**
-     * Apply patch
+     * Apply data patch
      *
      * @return void
      */
@@ -82,10 +82,10 @@ class AddPinnedPosAllowedSourcesAttribute implements DataPatchInterface, PatchRe
                 Customer::ENTITY,
                 self::ATTRIBUTE_CODE,
                 [
-                    'type' => 'varchar',
-                    'label' => 'Allowed POS Sources',
-                    'input' => 'multiselect',
-                    'source' => PosSource::class,
+                    'type' => 'int',
+                    'label' => 'Is Supervisor',
+                    'input' => 'boolean',
+                    'source' => Boolean::class,
                     'required' => false,
                     'position' => 999,
                     'visible' => true,
@@ -101,7 +101,12 @@ class AddPinnedPosAllowedSourcesAttribute implements DataPatchInterface, PatchRe
             $attribute = $customerSetup->getEavConfig()->getAttribute(Customer::ENTITY, self::ATTRIBUTE_CODE);
             $attribute->addData(
                 [
-                    'used_in_forms' => ['adminhtml_customer'],
+                    'used_in_forms' => ['adminhtml_customer']
+                ]
+            );
+
+            $attribute->addData(
+                [
                     'attribute_set_id' => $attributeSetId,
                     'attribute_group_id' => $attributeGroupId
                 ]
@@ -114,7 +119,9 @@ class AddPinnedPosAllowedSourcesAttribute implements DataPatchInterface, PatchRe
     }
 
     /**
-     * Get array of patches that have to be executed
+     * Get dependencies that are executed prior to this
+     *
+     * @return array
      */
     public static function getDependencies()
     {
@@ -122,18 +129,22 @@ class AddPinnedPosAllowedSourcesAttribute implements DataPatchInterface, PatchRe
     }
 
     /**
-     * Get aliases (previous names) for the patch
+     * Reverse code that was applied
+     *
+     * @return array
      */
     public function revert()
     {
         $this->moduleDataSetup->getConnection()->startSetup();
         $customerSetup = $this->customerSetupFactory->create(['setup' => $this->moduleDataSetup]);
-        $customerSetup->removeAttribute(Customer::ENTITY, 'default_pos_source');
+        $customerSetup->removeAttribute(Customer::ENTITY, self::ATTRIBUTE_CODE);
         $this->moduleDataSetup->getConnection()->endSetup();
     }
 
     /**
-     * Get array of patches that have to be executed
+     * Get aliases (previous names) for the patch
+     *
+     * @return array
      */
     public function getAliases()
     {

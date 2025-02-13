@@ -80,7 +80,7 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
         foreach ($invoices->getItems() as $invoice) {
             $order = $invoice->getOrder();
 
-            if ($this->checkOrderFilters($order)) {
+            if (!$this->checkOrderFilters($order)) {
                 continue;
             }
 
