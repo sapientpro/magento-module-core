@@ -15,7 +15,8 @@
         "sort-packages": true
     },
     "require": {
-        "php": ">=7.4"
+        "php": ">=7.4",
+        "chillerlan/php-qrcode": "^5.0"
     },
     "autoload": {
         "files": [
