@@ -1,0 +1,16 @@
+<?php
+
+use Magento\Framework\View\Element\Template;
+use SapientPro\Core\ViewModel\CompanyInfoProvider;
+
+/**
+ * Report PDF
+ *
+ * @var $escaper Magento\Framework\Escaper
+ * @var $block Template
+ * @var $companyInfoProvider CompanyInfoProvider
+ */
+$companyInfoProvider = $block->getData('company_info_provider');
+?>
+
+<img alt="<?= __('Company Logo') ?>" src="<?= $companyInfoProvider->getCompanyLogo() ?>"/>

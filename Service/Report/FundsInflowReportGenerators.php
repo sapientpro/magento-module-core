@@ -46,10 +46,7 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
     ];
 
     /**
-     * Add filter by customer id
-     *
-     * @param int $customerId
-     * @return void
+     * @inheirtdoc
      */
     public function addCustomerFilter(int $customerId): void
     {
@@ -57,10 +54,7 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
     }
 
     /**
-     * Add filter by cashier
-     *
-     * @param int $cashierId
-     * @return void
+     * @inheirtdoc
      */
     public function addCashierFilter(int $cashierId): void
     {
@@ -68,10 +62,7 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
     }
 
     /**
-     * Add filter by packer
-     *
-     * @param int $packerId
-     * @return void
+     * @inheirtdoc
      */
     public function addPackerFilter(int $packerId): void
     {
@@ -79,10 +70,7 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
     }
 
     /**
-     * Add filter by source
-     *
-     * @param string $sourceId
-     * @return void
+     * @inheirtdoc
      */
     public function addSourceFilter(string $sourceId): void
     {
@@ -90,12 +78,7 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
     }
 
     /**
-     * Generate sales report
-     *
-     * @param DateTime|null $dateFrom
-     * @param DateTime|null $dateTo
-     * @return Collection
-     * @throws Exception
+     * @inheirtdoc
      */
     public function execute(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
     {

@@ -32,17 +32,14 @@ class PdfImagesService implements PdfImagesServiceInterface
     /**
      * Constructor
      *
-     * @param DirectoryList $directoryList
      * @param ScopeConfigInterface $scopeConfig
      * @param Filesystem $filesystem
      * @throws FileSystemException
      */
     public function __construct(
-        DirectoryList $directoryList,
         ScopeConfigInterface $scopeConfig,
         Filesystem $filesystem
     ) {
-        $this->directoryList = $directoryList;
         $this->scopeConfig = $scopeConfig;
         $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
     }

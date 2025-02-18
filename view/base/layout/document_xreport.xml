@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd"
+      layout="report_empty">
+    <referenceContainer name="report_root">
+        <referenceContainer name="report-data">
+            <referenceBlock name="report_details" template="SapientPro_Core::report/funds_in_flow/details.phtml">
+                <arguments>
+                    <argument name="view_model" xsi:type="object">SapientPro\Core\ViewModel\Report\XReport</argument>
+                </arguments>
+            </referenceBlock>
+        </referenceContainer>
+    </referenceContainer>
+</page>
+
