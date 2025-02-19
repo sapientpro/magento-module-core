@@ -4,10 +4,13 @@ declare(strict_types=1);
 
 namespace SapientPro\Core\ViewModel\Report;
 
+use Magento\Framework\Api\SearchCriteriaBuilder;
 use SapientPro\Core\Api\ViewModel\ReportInterface;
 use Magento\Payment\Model\Config as PaymentConfig;
-use SapientPro\Core\Api\Report\FundsInflowReportGeneratorsInterface;
-use SapientPro\PointOfSale\Model\Payment\PosCashPayment;
+use SapientPro\Core\Api\Report\FundsInflowReportGeneratorsInterfaceFactory;
+use Magento\Framework\Data\Collection;
+use Magento\Framework\Data\CollectionFactory;
+use DateTime;
 
 class XReport implements ReportInterface
 {
@@ -17,46 +20,134 @@ class XReport implements ReportInterface
     private PaymentConfig $paymentConfig;
 
     /**
-     * @var FundsInflowReportGeneratorsInterface
+     * @var FundsInflowReportGeneratorsInterfaceFactory
      */
-    private FundsInflowReportGeneratorsInterface $fundsInflowReportGenerators;
+    private FundsInflowReportGeneratorsInterfaceFactory $fundsInflowReportGeneratorsFactory;
+
+    /**
+     * @var SearchCriteriaBuilder
+     */
+    private SearchCriteriaBuilder $searchCriteriaBuilder;
+
+    /**
+     * @var bool
+     */
+    private bool $isSupervisor= false;
+
+    /**
+     * @var int
+     */
+    private int $filterCashierId;
+
+    /**
+     * @var int
+     */
+    private int $filterPackerId;
+
+    /**
+     * @var DateTime
+     */
+    private DateTime $filterDateFrom;
+
+    /**
+     * @var DateTime
+     */
+    private DateTime $filterDateTo;
+
+    /**
+     * @var string
+     */
+    private string $filterSourceId;
+
+    /**
+     * @var Collection
+     */
+    private Collection $cashiersInReport;
 
     /**
      * PaymentViewModal constructor.
      *
      * @param PaymentConfig $paymentConfig
-     * @param FundsInflowReportGeneratorsInterface $fundsInflowReportGenerators
+     * @param FundsInflowReportGeneratorsInterfaceFactory $fundsInflowReportGeneratorsFactory
+     * @param SearchCriteriaBuilder $searchCriteriaBuilder
      */
     public function __construct(
         PaymentConfig $paymentConfig,
-        FundsInflowReportGeneratorsInterface $fundsInflowReportGenerators
+        FundsInflowReportGeneratorsInterfaceFactory $fundsInflowReportGeneratorsFactory,
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        CollectionFactory $collectionFactory
     ) {
         $this->paymentConfig = $paymentConfig;
-        $this->fundsInflowReportGenerators = $fundsInflowReportGenerators;
+        $this->fundsInflowReportGeneratorsFactory = $fundsInflowReportGeneratorsFactory;
+        $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->cashiersInReport = $collectionFactory->create();
     }
 
-    public function addDateFromFilter()
+    /**
+     * @inheirtdoc
+     */
+    public function isSupervisor(?bool $isSupervisor = null): bool
     {
-        // TODO: Implement setDateFromFilter() method.
+        if ($isSupervisor) {
+            $this->isSupervisor = $isSupervisor;
+        }
+
+        return $this->isSupervisor;
     }
 
-    public function addDateToFilter()
+    /**
+     * @inheirtdoc
+     */
+    public function addDateFromFilter(DateTime $dateTime)
     {
-        // TODO: Implement setDateToFilter() method.
+        $this->filterDateFrom = $dateTime;
     }
 
+    /**
+     * @inheirtdoc
+     */
+    public function addDateToFilter(DateTime $dateTime)
+    {
+        $this->filterDateTo = $dateTime;
+    }
+
+    /**
+     * @inheirtdoc
+     */
     public function addSourceFilter(string $sourceId)
     {
-        $this->fundsInflowReportGenerators->addSourceFilter($sourceId);
+        $this->filterSourceId = $sourceId;
     }
 
-    public function addCashierFilter()
+    /**
+     * @inheirtdoc
+     */
+    public function addCashierFilter(int $cashierId)
     {
-        // TODO: Implement setCashierFilter() method.
+        $this->filterCashierId = $cashierId;
     }
 
-    public function addPackerFilter()
+    /**
+     * @inheirtdoc
+     */
+    public function addPackerFilter(int $packerId)
     {
-        // TODO: Implement setPackerFilter() method.
+        $this->filterPackerId = $packerId;
+    }
+
+    public function getFullReportDataBySource(): Collection
+    {
+        $reportGenerator = $this->fundsInflowReportGeneratorsFactory->create();
+        $reportGenerator->addSourceFilter($this->filterSourceId);
+
+        return $reportGenerator->execute($this->filterDateFrom, $this->filterDateTo);
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCashiersInReport(): Collection
+    {
+        return $this->cashiersInReport;
     }
 }

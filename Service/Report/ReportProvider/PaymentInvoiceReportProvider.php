@@ -2,12 +2,14 @@
 
 namespace SapientPro\Core\Service\Report\ReportProvider;
 
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 use SapientPro\Core\Api\Report\ReportProvider\ReportProviderInterface;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\CollectionFactory;
 use Magento\Framework\Data\Collection\ModelFactory;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Sales\Api\Data\OrderInterface;
 use SapientPro\Core\Api\Report\Data\SalesReportInterface;
 use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\Api\FilterBuilder;
@@ -17,22 +19,42 @@ use Magento\Framework\Api\SearchCriteria;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use DateMalformedStringException;
 use DateTime;
-use Exception;
 
 class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract implements ReportProviderInterface
 {
+    /**
+     * @var CollectionFactory
+     */
     private CollectionFactory $collectionFactory;
 
+    /**
+     * @var InvoiceRepositoryInterfaceFactory
+     */
     protected InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory;
 
+    /**
+     * @var CreditmemoRepositoryInterfaceFactory
+     */
     protected CreditmemoRepositoryInterfaceFactory $creditmemoCollectionFactory;
 
+    /**
+     * @var SearchCriteriaBuilder
+     */
     private SearchCriteriaBuilder $searchCriteriaBuilder;
 
+    /**
+     * @var FilterBuilder
+     */
     private FilterBuilder $filterBuilder;
 
+    /**
+     * @var ModelFactory
+     */
     private ModelFactory $modelFactory;
 
+    /**
+     * @var TimezoneInterface
+     */
     private TimezoneInterface $timezone;
 
     /**
@@ -42,6 +64,7 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
      * @param InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory
      * @param CreditmemoRepositoryInterfaceFactory $creditmemoCollectionFactory
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param CustomerRepositoryInterface $customerRepository
      * @param ModelFactory $modelFactory
      * @param FilterBuilder $filterBuilder
      * @param TimezoneInterface $timezone
@@ -51,6 +74,7 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
         InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory,
         CreditmemoRepositoryInterfaceFactory $creditmemoCollectionFactory,
         SearchCriteriaBuilder $searchCriteriaBuilder,
+        CustomerRepositoryInterface $customerRepository,
         ModelFactory $modelFactory,
         FilterBuilder $filterBuilder,
         TimezoneInterface $timezone
@@ -62,6 +86,10 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
         $this->modelFactory = $modelFactory;
         $this->filterBuilder = $filterBuilder;
         $this->timezone = $timezone;
+        $this->customerRepository = $customerRepository;
+        $this->cashiersCollection = $this->collectionFactory->create();
+        $this->packersCollection = $this->collectionFactory->create();
+        $this->sourcesCollection = $this->collectionFactory->create();
     }
 
     /**
@@ -95,6 +123,17 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
                 $reportItem->setTitle($paymentTitle);
                 $collectByPaymentTypes[$paymentCode] = $reportItem;
                 $collection->addItem($reportItem);
+
+                $cashier = $this->getCustomerById($order->getCashierId());
+                $packer = $this->getCustomerById($order->getPackerId());
+
+                if ($cashier) {
+                	$this->cashiersCollection->addItem($cashier);
+                }
+
+                if ($packer) {
+                	$this->packersCollection->addItem($packer);
+                }
             }
 
             $reportItem->increaseDebit($invoice->getGrandTotal());
@@ -129,4 +168,20 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
 
         return $this->searchCriteriaBuilder->create();
     }
+
+    /**
+     * Get customer by id
+     *
+     * @param int $customerId
+     * @return CustomerInterface|null
+     */
+    protected function getCustomerById(int $customerId): ?CustomerInterface
+    {
+        try {
+            return $this->customerRepository->getById($customerId);
+        } catch (NoSuchEntityException|LocalizedException $e) {
+            return null;
+        }
+    }
+
 }

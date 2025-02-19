@@ -2,22 +2,12 @@
 
 namespace SapientPro\Core\Service\Report\ReportProvider;
 
-use SapientPro\Core\Api\Report\ReportProvider\ReportProviderInterface;
+use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\CollectionFactory;
-use Magento\Framework\Data\Collection\ModelFactory;
-use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Api\Data\OrderInterface;
-use SapientPro\Core\Api\Report\Data\SalesReportInterface;
-use Magento\Framework\Api\SearchCriteriaBuilder;
-use Magento\Framework\Api\FilterBuilder;
 use Magento\Sales\Api\InvoiceRepositoryInterfaceFactory;
 use Magento\Sales\Api\CreditmemoRepositoryInterfaceFactory;
-use Magento\Framework\Api\SearchCriteria;
-use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
-use DateMalformedStringException;
-use DateTime;
-use Exception;
 
 abstract class PaymentReportProviderAbstract
 {
@@ -32,6 +22,26 @@ abstract class PaymentReportProviderAbstract
     ];
 
     /**
+     * @var Collection
+     */
+    protected Collection $cashiersCollection;
+
+    /**
+     * @var Collection
+     */
+    protected Collection $packersCollection;
+
+    /**
+     * @var Collection
+     */
+    protected Collection $sourcesCollection;
+
+    /**
+     * @var CustomerRepositoryInterface
+     */
+    protected $customerRepository;
+
+    /**
      * Set filters
      *
      * @param array $filters
@@ -44,6 +54,30 @@ abstract class PaymentReportProviderAbstract
                 $this->orderFilters[$filterName] = $filterValue;
             }
         }
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getCashiers(): Collection
+    {
+        return $this->cashiersCollection;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getPackers(): Collection
+    {
+        return $this->packersCollection;
+    }
+
+    /**
+     * @return Collection
+     */
+    public function getSources(): Collection
+    {
+        return $this->sourcesCollection;
     }
 
     /**
@@ -85,4 +119,5 @@ abstract class PaymentReportProviderAbstract
             return $carry && $item;
         }, true);
     }
+
 }

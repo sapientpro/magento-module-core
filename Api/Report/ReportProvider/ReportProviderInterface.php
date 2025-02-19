@@ -9,5 +9,11 @@ interface ReportProviderInterface
 {
     public function setFilters(array $filters): void;
 
+    public function getCashiers(): Collection;
+
+    public function getPackers(): Collection;
+
+    public function getSources(): Collection;
+
     public function execute(DateTime $dateFrom = null, DateTime $dateTo = null): Collection;
 }

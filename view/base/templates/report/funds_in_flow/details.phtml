@@ -7,7 +7,10 @@ use SapientPro\Core\ViewModel\Report\XReport;
  * @var $block Template
  * @var $viewModel XReport
  */
+$viewModel = $block->getViewModel();
 ?>
 <div>
-
+    <?php foreach ($viewModel->getFullReportDataBySource() as $item): ?>
+        <?= $item->getId(); ?>
+    <?php endforeach; ?>
 </div>

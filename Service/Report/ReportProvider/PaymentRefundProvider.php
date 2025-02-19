@@ -2,6 +2,10 @@
 
 namespace SapientPro\Core\Service\Report\ReportProvider;
 
+use Magento\Customer\Api\CustomerRepositoryInterface;
+use Magento\Customer\Api\Data\CustomerInterface;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Exception\NoSuchEntityException;
 use SapientPro\Core\Api\Report\ReportProvider\ReportProviderInterface;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\CollectionFactory;
@@ -48,6 +52,7 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
         InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory,
         CreditmemoRepositoryInterfaceFactory $creditmemoCollectionFactory,
         SearchCriteriaBuilder $searchCriteriaBuilder,
+        CustomerRepositoryInterface $customerRepository,
         ModelFactory $modelFactory,
         FilterBuilder $filterBuilder,
         TimezoneInterface $timezone
@@ -56,9 +61,13 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
         $this->invoiceCollectionFactory = $invoiceCollectionFactory;
         $this->creditmemoCollectionFactory = $creditmemoCollectionFactory;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
+        $this->customerRepository = $customerRepository;
         $this->modelFactory = $modelFactory;
         $this->filterBuilder = $filterBuilder;
         $this->timezone = $timezone;
+        $this->cashiersCollection = $this->collectionFactory->create();
+        $this->packersCollection = $this->collectionFactory->create();
+        $this->sourcesCollection = $this->collectionFactory->create();
     }
 
     public function execute(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
@@ -88,6 +97,17 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
                 $reportItem->setTitle($paymentTitle);
                 $collectByPaymentTypes[$paymentCode] = $reportItem;
                 $collection->addItem($reportItem);
+
+                $cashier = $this->getCustomerById($order->getCashierId());
+                $packer = $this->getCustomerById($order->getPackerId());
+
+                if ($cashier) {
+                    $this->cashiersCollection->addItem($cashier);
+                }
+
+                if ($packer) {
+                    $this->packersCollection->addItem($packer);
+                }
             }
 
             $reportItem->increaseCredit($creditMemo->getGrandTotal());
@@ -121,5 +141,20 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
             ->addFilter('created_at', $dateTo->format('Y-m-d H:i:s'), 'lteq');
 
         return $this->searchCriteriaBuilder->create();
+    }
+
+    /**
+     * Get customer by id
+     *
+     * @param int $customerId
+     * @return CustomerInterface|null
+     */
+    protected function getCustomerById(int $customerId): ?CustomerInterface
+    {
+        try {
+            return $this->customerRepository->getById($customerId);
+        } catch (NoSuchEntityException|LocalizedException $e) {
+            return null;
+        }
     }
 }
