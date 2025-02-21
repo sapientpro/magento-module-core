@@ -13,7 +13,7 @@
                 <block name="report_qr" cacheable="false" template="SapientPro_Core::report/report_root/elements/qr.phtml">
                     <arguments>
                         <argument name="unique_document_url" xsi:type="string" translate="false">QR Code</argument>
-                        <argument name="company_info_provider" xsi:type="object">SapientPro\Core\ViewModel\CompanyInfoProvider</argument>
+                        <argument name="report_pdf_qr_view_modal" xsi:type="object">SapientPro\Core\ViewModel\Report\HeaderQr</argument>
                     </arguments>
                 </block>
             </container>
@@ -27,7 +27,7 @@
         </container>
         <container name="report-data" htmlTag="div" htmlClass="report"/>
         <container name="report-footer" htmlTag="div" htmlClass="footer">
-            <block name="report_footer" cacheable="false" template="SapientPro_Core::report/report_root/footer.phtml"/>
+            <block class="SapientPro\Core\Block\Report\Footer" name="report_footer" cacheable="false" template="SapientPro_Core::report/report_root/footer.phtml"/>
         </container>
     </container>
 </layout>

@@ -8,9 +8,9 @@ use SapientPro\Core\ViewModel\CompanyInfoProvider;
  *
  * @var $escaper Magento\Framework\Escaper
  * @var $block Template
- * @var $companyInfoProvider CompanyInfoProvider
+ * @var $companyInfoProvider \SapientPro\Core\ViewModel\Report\HeaderQr
  */
-$companyInfoProvider = $block->getData('company_info_provider');
+$companyInfoProvider = $block->getData('report_pdf_qr_view_modal');
 ?>
 
-<img alt="<?= __('Company Logo') ?>" src="<?= $companyInfoProvider->getCompanyLogo() ?>"/>
+<img class="qr-image" alt="<?= __('Company Logo') ?>" src="<?= $companyInfoProvider->generateQrCode($block->getData('unique_document_url') ?? '') ?>"/>

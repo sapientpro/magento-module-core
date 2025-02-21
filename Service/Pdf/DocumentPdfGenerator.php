@@ -5,6 +5,7 @@ namespace SapientPro\Core\Service\Pdf;
 use Magento\Framework\Exception\FileSystemException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Filesystem\Directory\WriteInterface;
+use Magento\Framework\View\Element\Block\ArgumentInterface;
 use SapientPro\Core\Api\ViewModel\ReportInterface as ViewModelReportInterface;
 use Magento\Framework\View\Result\PageFactory;
 use Magento\Framework\View\Element\Template;
@@ -48,6 +49,11 @@ class DocumentPdfGenerator
     private Page $document;
 
     /**
+     * @var string
+     */
+    private string $registeredPdfFilePath;
+
+    /**
      * Constructor
      *
      * @param PageFactory $pageFactory
@@ -56,9 +62,10 @@ class DocumentPdfGenerator
      */
     public function __construct(
         PageFactory $pageFactory,
-        Filesystem $filesystem,
-        File $fileIo
-    ) {
+        Filesystem  $filesystem,
+        File        $fileIo
+    )
+    {
         $this->pageFactory = $pageFactory;
         $this->filesystem = $filesystem;
         $this->fileIo = $fileIo;
@@ -95,6 +102,22 @@ class DocumentPdfGenerator
     }
 
     /**
+     * @return ArgumentInterface
+     * @throws LocalizedException
+     */
+    public function getHeaderQrViewModel(): ArgumentInterface
+    {
+        $block = $this->document->getLayout()->getBlock('report_qr');
+        $viewModel = $block->getData('report_pdf_qr_view_modal');
+
+        if ($viewModel) {
+            return $viewModel;
+        }
+
+        throw new LocalizedException(__('Block report_qr not found'));
+    }
+
+    /**
      * Generate document HTML
      *
      * @return string
@@ -128,10 +151,7 @@ class DocumentPdfGenerator
         $dompdf->setPaper('A4');
         $dompdf->render();
 
-        $varDir = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
-        $filePath = date('Ymd') . $this->uniqueDocumentName . '.pdf';
-        $fullPath = $varDir->getAbsolutePath($filePath);
-
+        $fullPath = $this->getRegisteredPdfFilePath();
         $this->fileIo->checkAndCreateFolder(dirname($fullPath));
 
         file_put_contents($fullPath, $dompdf->output());
@@ -155,4 +175,29 @@ class DocumentPdfGenerator
     {
         return $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
     }
+
+    /**
+     * @return string
+     */
+    public function getRegisteredPdfFilePath()
+    {
+        if (!$this->registeredPdfFilePath) {
+            $this->registerPdfFIlePath();
+        }
+
+        return $this->registeredPdfFilePath;
+    }
+
+    /**
+     * @return void
+     * @throws FileSystemException
+     */
+    public function registerPdfFIlePath()
+    {
+        $varDir = $this->filesystem->getDirectoryWrite(DirectoryList::MEDIA);
+        $filePath = date('Ymd') . $this->uniqueDocumentName . '.pdf';
+
+        $this->registeredPdfFilePath = $varDir->getAbsolutePath($filePath);
+    }
+
 }

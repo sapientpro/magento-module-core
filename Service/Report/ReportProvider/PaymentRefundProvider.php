@@ -21,9 +21,16 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use DateMalformedStringException;
 use DateTime;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
+use SapientPro\Core\Api\Report\Data\CashiersReportInterface;
+use SapientPro\Core\Api\Report\Data\PackersReportInterface;
 
 class PaymentRefundProvider extends PaymentReportProviderAbstract implements ReportProviderInterface
 {
+    /**
+     * @var array
+     */
+    private array $customerCache = [];
+
     /**
      * @var CollectionFactory
      */
@@ -65,6 +72,16 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
     private CustomerCollectionFactory $customerCollectionFactory;
 
     /**
+     * @var CashiersReportInterface
+     */
+    private CashiersReportInterface $cashiersReport;
+
+    /**
+     * @var PackersReportInterface
+     */
+    private PackersReportInterface $packersReport;
+
+    /**
      * Sales Report Provider Constructor
      *
      * @param CollectionFactory $collectionFactory
@@ -76,6 +93,8 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
      * @param FilterBuilder $filterBuilder
      * @param TimezoneInterface $timezone
      * @param CustomerCollectionFactory $customerCollectionFactory
+     * @param CashiersReportInterface $cashiersReport
+     * @param PackersReportInterface $packersReport
      */
     public function __construct(
         CollectionFactory $collectionFactory,
@@ -86,7 +105,9 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
         ModelFactory $modelFactory,
         FilterBuilder $filterBuilder,
         TimezoneInterface $timezone,
-        CustomerCollectionFactory $customerCollectionFactory
+        CustomerCollectionFactory $customerCollectionFactory,
+        CashiersReportInterface $cashiersReport,
+        PackersReportInterface $packersReport
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->invoiceCollectionFactory = $invoiceCollectionFactory;
@@ -100,6 +121,8 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
         $this->packersCollection = $this->collectionFactory->create();
         $this->sourcesCollection = $this->collectionFactory->create();
         $this->customerCollectionFactory = $customerCollectionFactory;
+        $this->cashiersReport = $cashiersReport;
+        $this->packersReport = $packersReport;
     }
 
     /**
@@ -140,12 +163,12 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
                 $cashier = $this->getCustomerById($order->getCashierId());
                 $packer = $this->getCustomerById($order->getPackerId());
 
-                if ($cashier->getId() && !$this->cashiersCollection->getItemById($cashier->getId())) {
-                    $this->cashiersCollection->addItem($cashier);
+                if ($cashier->getId()) {
+                    $this->cashiersReport->addCashier($cashier);
                 }
 
-                if ($packer->getId() && !$this->packersCollection->getItemById($packer->getId())) {
-                    $this->packersCollection->addItem($packer);
+                if ($packer->getId()) {
+                    $this->packersReport->addPacker($packer);
                 }
             }
 
@@ -191,10 +214,14 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
      */
     protected function getCustomerById(int $customerId): DataObject
     {
-        $customerCollection = $this->customerCollectionFactory->create();
-        $customerCollection->addAttributeToSelect('*');
-        $customerCollection->addAttributeToFilter('entity_id', $customerId);
+        if (!isset($this->customerCache[$customerId])) {
+            $customerCollection = $this->customerCollectionFactory->create();
+            $customerCollection->addAttributeToSelect('*');
+            $customerCollection->addAttributeToFilter('entity_id', $customerId);
 
-        return $customerCollection->getFirstItem();
+            $this->customerCache[$customerId] = $customerCollection->getFirstItem();
+        }
+
+        return $this->customerCache[$customerId];
     }
 }

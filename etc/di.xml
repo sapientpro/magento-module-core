@@ -9,6 +9,10 @@
                 type="SapientPro\Core\Service\Report\FundsInflowReportGenerators"/>
     <preference for="SapientPro\Core\Api\Pdf\PdfImagesServiceInterface"
                 type="SapientPro\Core\Service\Pdf\PdfImagesService"/>
+    <preference for="SapientPro\Core\Api\Report\Data\CashiersReportInterface"
+                type="SapientPro\Core\Service\Report\CashiersReport"/>
+    <preference for="SapientPro\Core\Api\Report\Data\PackersReportInterface"
+                type="SapientPro\Core\Service\Report\PackersReport"/>
     <type name="SapientPro\Core\Api\Report\FundsInflowReportGeneratorsInterface">
         <arguments>
             <argument name="collectionFactory" xsi:type="object">Magento\Framework\Data\CollectionFactory</argument>

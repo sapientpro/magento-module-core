@@ -18,9 +18,16 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use DateMalformedStringException;
 use DateTime;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
+use SapientPro\Core\Api\Report\Data\CashiersReportInterface;
+use SapientPro\Core\Api\Report\Data\PackersReportInterface;
 
 class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract implements ReportProviderInterface
 {
+    /**
+     * @var array
+     */
+    private array $customerCache = [];
+
     /**
      * @var CollectionFactory
      */
@@ -60,6 +67,14 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
      * @var CustomerCollectionFactory
      */
     private CustomerCollectionFactory $customerCollectionFactory;
+    /**
+     * @var CashiersReportInterface
+     */
+    private CashiersReportInterface $cashiersReport;
+    /**
+     * @var PackersReportInterface
+     */
+    private PackersReportInterface $packersReport;
 
     /**
      * Sales Report Provider Constructor
@@ -72,18 +87,21 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
      * @param FilterBuilder $filterBuilder
      * @param TimezoneInterface $timezone
      * @param CustomerCollectionFactory $customerCollectionFactory
+     * @param CashiersReportInterface $cashiersReport
+     * @param PackersReportInterface $packersReport
      */
     public function __construct(
-        CollectionFactory                    $collectionFactory,
-        InvoiceRepositoryInterfaceFactory    $invoiceCollectionFactory,
+        CollectionFactory $collectionFactory,
+        InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory,
         CreditmemoRepositoryInterfaceFactory $creditmemoCollectionFactory,
-        SearchCriteriaBuilder                $searchCriteriaBuilder,
-        ModelFactory                         $modelFactory,
-        FilterBuilder                        $filterBuilder,
-        TimezoneInterface                    $timezone,
-        CustomerCollectionFactory            $customerCollectionFactory
-    )
-    {
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        ModelFactory $modelFactory,
+        FilterBuilder $filterBuilder,
+        TimezoneInterface $timezone,
+        CustomerCollectionFactory $customerCollectionFactory,
+        CashiersReportInterface $cashiersReport,
+        PackersReportInterface $packersReport
+    ) {
         $this->collectionFactory = $collectionFactory;
         $this->invoiceCollectionFactory = $invoiceCollectionFactory;
         $this->creditmemoCollectionFactory = $creditmemoCollectionFactory;
@@ -95,6 +113,8 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
         $this->packersCollection = $this->collectionFactory->create();
         $this->sourcesCollection = $this->collectionFactory->create();
         $this->customerCollectionFactory = $customerCollectionFactory;
+        $this->cashiersReport = $cashiersReport;
+        $this->packersReport = $packersReport;
     }
 
     /**
@@ -132,17 +152,18 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
                 $cashier = $this->getCustomerById($order->getCashierId());
                 $packer = $this->getCustomerById($order->getPackerId());
 
-                if ($cashier->getId() && !$this->cashiersCollection->getItemById($cashier->getId())) {
-                    $this->cashiersCollection->addItem($cashier);
+                if ($cashier->getId()) {
+                    $this->cashiersReport->addCashier($cashier);
                 }
 
-                if ($packer->getId() && !$this->packersCollection->getItemById($packer->getId())) {
-                    $this->packersCollection->addItem($packer);
+                if ($packer->getId()) {
+                    $this->packersReport->addPacker($packer);
                 }
             }
 
             $reportItem->increaseDebit($invoice->getGrandTotal());
             $reportItem->increaseTotal($invoice->getGrandTotal());
+            $reportItem->increaseDiscount($invoice->getDiscountAmount());
         }
 
         return $collection;
@@ -183,11 +204,14 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
      */
     protected function getCustomerById(int $customerId): DataObject
     {
-        $customerCollection = $this->customerCollectionFactory->create();
-        $customerCollection->addAttributeToSelect('*');
-        $customerCollection->addAttributeToFilter('entity_id', $customerId);
+        if (!isset($this->customerCache[$customerId])) {
+            $customerCollection = $this->customerCollectionFactory->create();
+            $customerCollection->addAttributeToSelect('*');
+            $customerCollection->addAttributeToFilter('entity_id', $customerId);
 
-        return $customerCollection->getFirstItem();
+            $this->customerCache[$customerId] = $customerCollection->getFirstItem();
+        }
+
+        return $this->customerCache[$customerId];
     }
-
 }

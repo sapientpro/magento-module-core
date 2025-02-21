@@ -1,1 +1,14 @@
-Hello footer
+<?php
+/**
+ * @var $block \SapientPro\Core\Block\Report\Footer
+ * @var $escaper \Magento\Framework\Escaper
+ */
+?>
+<div class="report-footer">
+    <div class="footer-content">
+        <p>&copy; <?= date('Y'); ?> <?= __('All rights reserved.') ?></p>
+        <p>Address: <?= $escaper->escapeHtml($block->getAddress()); ?></p>
+        <p>Phone: <?= $escaper->escapeHtml($block->getPhone()); ?></p>
+        <p>Email: <?= $escaper->escapeHtml($block->getEmail()); ?></p>
+    </div>
+</div>

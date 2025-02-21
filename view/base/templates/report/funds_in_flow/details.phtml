@@ -8,9 +8,100 @@ use SapientPro\Core\ViewModel\Report\XReport;
  * @var $viewModel XReport
  */
 $viewModel = $block->getViewModel();
+$isSupervisor = $viewModel->isSupervisor();
+$todayDate = (new \DateTime())->format('Y-m-d');
 ?>
-<div>
-    <?php foreach ($viewModel->getFullReportDataBySource() as $item): ?>
-        <?= $item->getId(); ?>
-    <?php endforeach; ?>
+<style>
+    .report-summary {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 20px;
+    }
+
+    .report-summary th, .report-summary td {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .report-summary td {
+        text-align: center;
+    }
+
+    .report-summary th {
+        background-color: #f2f2f2;
+        text-align: center;
+    }
+
+    .report-summary tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .report-summary tr:hover {
+        background-color: #ddd;
+    }
+
+    .cashier-section {
+        margin-top: 20px;
+    }
+
+    .cashier-name {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+</style>
+
+<div class="pdf-date">
+    <h3><?= __('Date') . ": " . $todayDate ?></h3>
 </div>
+<table class="report-summary">
+    <thead>
+    <tr>
+        <th><?php echo __("Payment Method") ?></th>
+        <th><?php echo __("Debit") ?></th>
+        <th><?php echo __("Credit") ?></th>
+        <th><?php echo __("Discount") ?></th>
+        <th><?php echo __("Total") ?></th>
+    </tr>
+    </thead>
+    <tbody>
+    <?php foreach ($viewModel->getFullReportDataBySource() as $item): ?>
+        <tr>
+            <td><?= $item->getTitle(); ?></td>
+            <td><?= $item->getDebit(); ?></td>
+            <td><?= $item->getCredit(); ?></td>
+            <td><?= $item->getDiscount(); ?></td>
+            <td><?= $item->getTotal(); ?></td>
+        </tr>
+    <?php endforeach; ?>
+    </tbody>
+</table>
+
+<?php if ($isSupervisor): ?>
+    <?php foreach ($viewModel->getCashiersInReport() as $cashier) : ?>
+        <div class="cashier-section">
+            <h4><?= __('Cashier') . ': ' . $cashier->getName() ?></h4>
+            <table class="report-summary">
+                <thead>
+                <tr>
+                    <th><?= __('Payment Method') ?></th>
+                    <th><?= __('Debit') ?></th>
+                    <th><?= __('Credit') ?></th>
+                    <th><?= __('Discount') ?></th>
+                    <th><?= __('Total') ?></th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($viewModel->getFullReportDataByCashier((int)$cashier->getId()) as $paymentMethod): ?>
+                    <tr>
+                        <td><?= $paymentMethod->getTitle(); ?></td>
+                        <td><?= $paymentMethod->getDebit(); ?></td>
+                        <td><?= $paymentMethod->getCredit(); ?></td>
+                        <td><?= $paymentMethod->getDiscount(); ?></td>
+                        <td><?= $paymentMethod->getTotal(); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    <?php endforeach; ?>
+<?php endif; ?>

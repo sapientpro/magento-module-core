@@ -13,6 +13,7 @@ interface SalesReportInterface
     public const DEBIT = 'debit';
 
     public const CREDIT = 'credit';
+    public const DISCOUNT = 'discount';
 
     public const SOURCES = 'sources';
 
@@ -79,6 +80,18 @@ interface SalesReportInterface
      * @return void
      */
     public function decreaseDebit(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function increaseDiscount(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function decreaseDiscount(float $value): void;
 
     /**
      * @return float

@@ -8,9 +8,10 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use SapientPro\Core\Api\ViewModel\ReportInterface;
 use Magento\Payment\Model\Config as PaymentConfig;
 use SapientPro\Core\Api\Report\FundsInflowReportGeneratorsInterfaceFactory;
-use Magento\Framework\Data\Collection;
+use Magento\Framework\Data\Collection as CustomerReportCollection;
 use Magento\Framework\Data\CollectionFactory;
 use DateTime;
+use SapientPro\Core\Api\Report\Data\CashiersReportInterface;
 
 class XReport implements ReportInterface
 {
@@ -32,7 +33,7 @@ class XReport implements ReportInterface
     /**
      * @var bool
      */
-    private bool $isSupervisor= false;
+    private bool $isSupervisor = false;
 
     /**
      * @var int
@@ -63,6 +64,14 @@ class XReport implements ReportInterface
      * @var Collection
      */
     private Collection $cashiersInReport;
+    /**
+     * @var CustomerReportCollection
+     */
+    private CustomerReportCollection $customerReportCollection;
+    /**
+     * @var CashiersReportInterface
+     */
+    private CashiersReportInterface $cashiersReport;
 
     /**
      * PaymentViewModal constructor.
@@ -70,17 +79,22 @@ class XReport implements ReportInterface
      * @param PaymentConfig $paymentConfig
      * @param FundsInflowReportGeneratorsInterfaceFactory $fundsInflowReportGeneratorsFactory
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
+     * @param CollectionFactory $collectionFactory
      */
     public function __construct(
-        PaymentConfig $paymentConfig,
+        PaymentConfig                               $paymentConfig,
         FundsInflowReportGeneratorsInterfaceFactory $fundsInflowReportGeneratorsFactory,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        CollectionFactory $collectionFactory
-    ) {
+        SearchCriteriaBuilder                       $searchCriteriaBuilder,
+        CustomerReportCollection                    $customerReportCollection,
+        CollectionFactory                           $collectionFactory,
+        CashiersReportInterface                     $cashiersReport
+    )
+    {
         $this->paymentConfig = $paymentConfig;
         $this->fundsInflowReportGeneratorsFactory = $fundsInflowReportGeneratorsFactory;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
-        $this->cashiersInReport = $collectionFactory->create();
+        $this->customerReportCollection = $customerReportCollection;
+        $this->cashiersReport = $cashiersReport;
     }
 
     /**
@@ -135,7 +149,10 @@ class XReport implements ReportInterface
         $this->filterPackerId = $packerId;
     }
 
-    public function getFullReportDataBySource(): Collection
+    /**
+     * @return CustomerReportCollection
+     */
+    public function getFullReportDataBySource(): CustomerReportCollection
     {
         $reportGenerator = $this->fundsInflowReportGeneratorsFactory->create();
         $reportGenerator->addSourceFilter($this->filterSourceId);
@@ -144,10 +161,24 @@ class XReport implements ReportInterface
     }
 
     /**
-     * @return Collection
+     * @param int $cashierId
+     * @return CustomerReportCollection
      */
-    public function getCashiersInReport(): Collection
+    public function getFullReportDataByCashier(int $cashierId): CustomerReportCollection
     {
-        return $this->cashiersInReport;
+        $reportGenerator = $this->fundsInflowReportGeneratorsFactory->create();
+        $reportGenerator->addSourceFilter($this->filterSourceId);
+        $reportGenerator->addCashierFilter($cashierId);
+
+        return $reportGenerator->execute($this->filterDateFrom, $this->filterDateTo);
+    }
+
+
+    /**
+     * @return array
+     */
+    public function getCashiersInReport()
+    {
+        return $this->cashiersReport->getCashiers();
     }
 }
