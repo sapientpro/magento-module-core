@@ -15,6 +15,7 @@ use Magento\Framework\Filesystem\Io\File;
 use Magento\Framework\View\Result\Page;
 use Dompdf\Options;
 use Dompdf\Dompdf;
+use Magento\Framework\UrlInterface;
 
 class DocumentPdfGenerator
 {
@@ -52,6 +53,14 @@ class DocumentPdfGenerator
      * @var string
      */
     private string $registeredPdfFilePath;
+    /**
+     * @var DirectoryList
+     */
+    private DirectoryList $directoryList;
+    /**
+     * @var UrlInterface
+     */
+    private UrlInterface $urlBuilder;
 
     /**
      * Constructor
@@ -61,16 +70,19 @@ class DocumentPdfGenerator
      * @param File $fileIo
      */
     public function __construct(
-        PageFactory $pageFactory,
-        Filesystem  $filesystem,
-        File        $fileIo
-    )
-    {
+        PageFactory   $pageFactory,
+        Filesystem    $filesystem,
+        File          $fileIo,
+        DirectoryList $directoryList,
+        UrlInterface  $urlBuilder
+    ) {
         $this->pageFactory = $pageFactory;
         $this->filesystem = $filesystem;
         $this->fileIo = $fileIo;
         $this->uniqueDocumentName = $this->generateUniqueDocumentName();
         $this->document = $this->pageFactory->create();
+        $this->directoryList = $directoryList;
+        $this->urlBuilder = $urlBuilder;
     }
 
     /**
@@ -129,7 +141,7 @@ class DocumentPdfGenerator
 
         /* @var $qrBlock Template */
         $qrBlock = $this->document->getLayout()->getBlock('report_qr');
-        $qrBlock->setData('unique_document_url', $this->uniqueDocumentName);
+        $qrBlock->setData('unique_document_url', $this->getDomainPdfFilePath());
         $block->setData('content', $this->document->getLayout()->getOutput());
 
         return $block->toHtml();
@@ -144,7 +156,7 @@ class DocumentPdfGenerator
     public function generatePdf(): void
     {
         $options = new Options();
-        $options->set('defaultFont', 'DejaVu Sans');
+        $options->setDefaultFont('sans-serif');
         $dompdf = new Dompdf($options);
 
         $dompdf->loadHtml($this->generateDocumentHtml());
@@ -200,4 +212,14 @@ class DocumentPdfGenerator
         $this->registeredPdfFilePath = $varDir->getAbsolutePath($filePath);
     }
 
+    /**
+     * @return string
+     */
+    public function getDomainPdfFilePath(): string
+    {
+        $filePath = date('Ymd') . $this->uniqueDocumentName . '.pdf';
+
+        $mediaUrl = $this->urlBuilder->getBaseUrl(['_type' => UrlInterface::URL_TYPE_MEDIA]);
+        return $mediaUrl . basename($filePath);
+    }
 }

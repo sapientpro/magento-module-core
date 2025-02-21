@@ -1,1 +1,14 @@
+<?php
+/** @var \Magento\Framework\View\Element\Template $block */
+?>
+<table style="width: 100%;">
+    <tr class="header">
+        <td class="logo" style="width: 50%;">
+            <?php echo $block->getChildHtml('report_logo'); ?>
+        </td>
+        <td class="qr" style="width: 50%; text-align: right;">
+            <?php echo $block->getChildHtml('report_qr'); ?>
+        </td>
+    </tr>
+</table>
 

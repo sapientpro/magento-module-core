@@ -1,33 +1,34 @@
 <?xml version="1.0"?>
-<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_layout.xsd">
+<layout xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_layout.xsd">
     <container name="report_root">
-        <container name="report-header" htmlTag="div" htmlClass="header">
-            <container name="report-logo" htmlTag="div" htmlClass="logo">
+        <container name="report-header-table" htmlTag="div">
+            <block name="report_header" template="SapientPro_Core::report/report_root/header.phtml">
                 <block name="report_logo" cacheable="false" template="SapientPro_Core::report/report_root/elements/logo.phtml">
                     <arguments>
                         <argument name="company_info_provider" xsi:type="object">SapientPro\Core\ViewModel\CompanyInfoProvider</argument>
                     </arguments>
                 </block>
-            </container>
-            <container name="qr-code" htmlTag="div" htmlClass="qr">
-                <block name="report_qr" cacheable="false" template="SapientPro_Core::report/report_root/elements/qr.phtml">
+                <block name="report_qr" template="SapientPro_Core::report/report_root/elements/qr.phtml">
                     <arguments>
                         <argument name="unique_document_url" xsi:type="string" translate="false">QR Code</argument>
                         <argument name="report_pdf_qr_view_modal" xsi:type="object">SapientPro\Core\ViewModel\Report\HeaderQr</argument>
                     </arguments>
                 </block>
-            </container>
+            </block>
         </container>
         <container name="details" htmlTag="div" htmlClass="details">
             <block name="report_details" cacheable="false" template="SapientPro_Core::report/report_root/details.phtml">
                 <arguments>
-                    <argument name="view_model" xsi:type="object">SapientPro\Core\ViewModel\CompanyInfoProvider</argument>
+                    <argument name="view_model" xsi:type="object">SapientPro\Core\ViewModel\CompanyInfoProvider
+                    </argument>
                 </arguments>
             </block>
         </container>
         <container name="report-data" htmlTag="div" htmlClass="report"/>
         <container name="report-footer" htmlTag="div" htmlClass="footer">
-            <block class="SapientPro\Core\Block\Report\Footer" name="report_footer" cacheable="false" template="SapientPro_Core::report/report_root/footer.phtml"/>
+            <block class="SapientPro\Core\Block\Report\Footer" name="report_footer" cacheable="false"
+                   template="SapientPro_Core::report/report_root/footer.phtml"/>
         </container>
     </container>
 </layout>
