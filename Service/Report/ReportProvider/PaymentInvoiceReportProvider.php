@@ -165,7 +165,7 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
 
             $reportItem->increaseDebit($invoice->getGrandTotal());
             $reportItem->increaseTotal($invoice->getGrandTotal());
-            $reportItem->increaseDiscount($invoice->getDiscountAmount());
+            $reportItem->increaseDiscount($order->getDiscountAmount());
         }
 
         return $collection;
