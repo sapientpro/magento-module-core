@@ -70,11 +70,11 @@ class DocumentPdfGenerator
      * @param File $fileIo
      */
     public function __construct(
-        PageFactory   $pageFactory,
-        Filesystem    $filesystem,
-        File          $fileIo,
+        PageFactory $pageFactory,
+        Filesystem $filesystem,
+        File $fileIo,
         DirectoryList $directoryList,
-        UrlInterface  $urlBuilder
+        UrlInterface $urlBuilder
     ) {
         $this->pageFactory = $pageFactory;
         $this->filesystem = $filesystem;

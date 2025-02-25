@@ -82,6 +82,11 @@ interface SalesReportInterface
     public function decreaseDebit(float $value): void;
 
     /**
+     * @return float
+     */
+    public function getDiscount(): float;
+
+    /**
      * @param float $value
      * @return void
      */

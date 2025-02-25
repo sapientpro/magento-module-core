@@ -10,6 +10,7 @@ use Magento\Framework\Data\Collection\ModelFactory;
 use DateTime;
 use Exception;
 use SapientPro\Core\Api\Report\ReportProvider\ReportProviderInterface;
+use SapientPro\Core\Model\Report\Config as ReportConfig;
 
 class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterface
 {
@@ -27,15 +28,19 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
      * @var ModelFactory
      */
     private ModelFactory $modelFactory;
+    private ReportConfig $reportConfig;
 
     public function __construct(
         CollectionFactory $collectionFactory,
-        ModelFactory $modelFactory,
-        array $providers
-    ) {
+        ModelFactory      $modelFactory,
+        ReportConfig      $reportConfig,
+        array             $providers
+    )
+    {
         $this->providers = $providers;
         $this->collectionFactory = $collectionFactory;
         $this->modelFactory = $modelFactory;
+        $this->reportConfig = $reportConfig;
     }
 
     protected array $orderFilters = [
@@ -80,9 +85,10 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
     /**
      * @inheirtdoc
      */
-    public function execute(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
+    public function execute(DateTime $dateFrom = null, DateTime $dateTo = null, string $reportType = 'default'): Collection
     {
         $collection = $this->collectionFactory->create();
+        $excludedPayments = $this->reportConfig->getExcludedPayments($reportType);
         /** @var ReportProviderInterface $provider */
         foreach ($this->providers as $provider) {
             $provider->setFilters($this->orderFilters);
@@ -90,6 +96,10 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
 
             /** @var SalesReportInterface $item */
             foreach ($result->getItems() as $item) {
+                if (in_array($item->getId(), $excludedPayments)) {
+                    continue;
+                }
+
                 /** @var SalesReportInterface $report */
                 $report = $collection->getItemById($item->getId());
                 if ($report) {
@@ -103,4 +113,6 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
 
         return $collection;
     }
+
+
 }

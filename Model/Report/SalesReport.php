@@ -171,6 +171,14 @@ class SalesReport extends AbstractModel implements SalesReportInterface
     }
 
     /**
+     * @return float
+     */
+    public function getDiscount(): float
+    {
+        return $this->getData(SalesReportInterface::DISCOUNT) ?? 0;
+    }
+
+    /**
      * @inherit
      */
     public function increaseDiscount(float $value): void

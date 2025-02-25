@@ -13,4 +13,4 @@ use SapientPro\Core\ViewModel\CompanyInfoProvider;
 $companyInfoProvider = $block->getData('report_pdf_qr_view_modal');
 ?>
 
-<img alt="<?= __('QR Code') ?>" src="<?= $companyInfoProvider->generateQrCode($block->getData('unique_document_url') ?? '') ?>" style="max-width: 100%; height: 200px;">
+<img alt="<?= __('QR Code') ?>" src="<?= $companyInfoProvider->generateQrCode($block->getData('unique_document_url') ?? '') ?>" style="max-width: 100%; height: 100px;">

@@ -12,6 +12,7 @@ use Magento\Framework\Data\Collection as CustomerReportCollection;
 use Magento\Framework\Data\CollectionFactory;
 use DateTime;
 use SapientPro\Core\Api\Report\Data\CashiersReportInterface;
+use SapientPro\Core\Model\Report\ReportStatus;
 
 class XReport implements ReportInterface
 {
@@ -157,7 +158,7 @@ class XReport implements ReportInterface
         $reportGenerator = $this->fundsInflowReportGeneratorsFactory->create();
         $reportGenerator->addSourceFilter($this->filterSourceId);
 
-        return $reportGenerator->execute($this->filterDateFrom, $this->filterDateTo);
+        return $reportGenerator->execute($this->filterDateFrom, $this->filterDateTo, ReportStatus::X_REPORT);
     }
 
     /**
@@ -170,7 +171,7 @@ class XReport implements ReportInterface
         $reportGenerator->addSourceFilter($this->filterSourceId);
         $reportGenerator->addCashierFilter($cashierId);
 
-        return $reportGenerator->execute($this->filterDateFrom, $this->filterDateTo);
+        return $reportGenerator->execute($this->filterDateFrom, $this->filterDateTo, ReportStatus::X_REPORT);
     }
 
 

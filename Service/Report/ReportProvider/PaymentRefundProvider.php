@@ -170,6 +170,8 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
                 if ($packer->getId()) {
                     $this->packersReport->addPacker($packer);
                 }
+            } else {
+                $reportItem = $collection->getItemById($paymentCode);
             }
 
             $reportItem->increaseCredit($creditMemo->getGrandTotal());

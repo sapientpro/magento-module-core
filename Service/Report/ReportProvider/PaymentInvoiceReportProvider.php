@@ -159,6 +159,8 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
                 if ($packer->getId()) {
                     $this->packersReport->addPacker($packer);
                 }
+            } else {
+                $reportItem = $collection->getItemById($paymentCode);
             }
 
             $reportItem->increaseDebit($invoice->getGrandTotal());
