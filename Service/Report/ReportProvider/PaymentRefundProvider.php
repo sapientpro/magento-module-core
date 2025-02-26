@@ -174,7 +174,7 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
                 $reportItem = $collection->getItemById($paymentCode);
             }
 
-            $reportItem->increaseCredit($creditMemo->getGrandTotal());
+            $reportItem->decreaseCredit($creditMemo->getGrandTotal());
             $reportItem->decreaseTotal($creditMemo->getGrandTotal());
         }
 
