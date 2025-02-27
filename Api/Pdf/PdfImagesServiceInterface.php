@@ -19,4 +19,14 @@ interface PdfImagesServiceInterface
      */
     public function generateQrCodeInBase64(string $data): string;
 
+    /**
+     * @return string
+     */
+    public function getPdfFilePath(): string;
+
+    /**
+     * @param string $filePath
+     * @return void
+     */
+    public function setPdfFilePath(string $filePath): void;
 }

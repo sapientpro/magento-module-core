@@ -3,6 +3,7 @@
 namespace SapientPro\Core\Service\Pdf;
 
 use chillerlan\QRCode\Data\QRMatrix;
+use chillerlan\QRCode\Output\QROutputInterface;
 use chillerlan\QRCode\QRCode;
 use chillerlan\QRCode\QROptions;
 use Magento\Framework\Exception\FileSystemException;
@@ -15,9 +16,9 @@ use SapientPro\Core\Api\Pdf\PdfImagesServiceInterface;
 
 class PdfImagesService implements PdfImagesServiceInterface
 {
-    const EMPTY_IMAGE_FORMAT = 'data:image/png;base64,';
+    public const EMPTY_IMAGE_FORMAT = 'data:image/png;base64,';
 
-    const EMPTY_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/epT/gAAAABJRU5ErkJggg==';
+    public const EMPTY_IMAGE = 'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/wcAAwAB/epT/gAAAABJRU5ErkJggg==';
 
     /**
      * @var ScopeConfigInterface
@@ -29,6 +30,8 @@ class PdfImagesService implements PdfImagesServiceInterface
      */
     private WriteInterface $mediaDirectory;
 
+    private string $pdfFilePath;
+
     /**
      * Constructor
      *
@@ -38,7 +41,7 @@ class PdfImagesService implements PdfImagesServiceInterface
      */
     public function __construct(
         ScopeConfigInterface $scopeConfig,
-        Filesystem $filesystem
+        Filesystem           $filesystem
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->mediaDirectory = $filesystem->getDirectoryWrite(DirectoryList::MEDIA);
@@ -61,7 +64,7 @@ class PdfImagesService implements PdfImagesServiceInterface
     public function generateQrCodeInBase64(string $data): string
     {
         $options = new QROptions([
-            'outputType' => QRCode::OUTPUT_IMAGE_PNG,
+            'outputType' => QROutputInterface::GDIMAGE_PNG,
             'quality' => 100,
             'keepAsSquare' => [
                 QRMatrix::M_FINDER_DARK,
@@ -88,4 +91,19 @@ class PdfImagesService implements PdfImagesServiceInterface
         return 'data:image/' . $imageType . ';base64,' . $imageData;
     }
 
+    /**
+     * @inheridoc
+     */
+    public function setPdfFilePath(string $filePath): void
+    {
+        $this->pdfFilePath = $filePath;
+    }
+
+    /**
+     * @inheridoc
+     */
+    public function getPdfFilePath(): string
+    {
+        return $this->pdfFilePath;
+    }
 }
