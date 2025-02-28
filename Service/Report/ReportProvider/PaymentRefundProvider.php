@@ -159,19 +159,19 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
                 $reportItem->setTitle($paymentTitle);
                 $collectByPaymentTypes[$paymentCode] = $reportItem;
                 $collection->addItem($reportItem);
-
-                $cashier = $this->getCustomerById($order->getCashierId());
-                $packer = $this->getCustomerById($order->getPackerId());
-
-                if ($cashier->getId()) {
-                    $this->cashiersReport->addCashier($cashier);
-                }
-
-                if ($packer->getId()) {
-                    $this->packersReport->addPacker($packer);
-                }
             } else {
                 $reportItem = $collection->getItemById($paymentCode);
+            }
+
+            $cashier = $this->getCustomerById($order->getCashierId());
+            $packer = $this->getCustomerById($order->getPackerId());
+
+            if ($cashier->getId()) {
+                $this->cashiersReport->addCashier($cashier);
+            }
+
+            if ($packer->getId()) {
+                $this->packersReport->addPacker($packer);
             }
 
             $reportItem->decreaseDebit($creditMemo->getGrandTotal());
