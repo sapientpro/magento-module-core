@@ -56,8 +56,17 @@ class CustomerPosAllowChecker
     /**
      * @return int
      */
-    public function getCustomerId(): int
+    public function getCashierId(): int
     {
-        return $this->customerSession->getCustomerId();
+        return $this->customerSession->getCashierId() ?? $this->customerSession->getCustomerId();
+    }
+
+    /**
+     * @param int $cashierId
+     * @return void
+     */
+    public function setCashierId(int $cashierId): void
+    {
+        $this->customerSession->setCashierId($cashierId);
     }
 }
