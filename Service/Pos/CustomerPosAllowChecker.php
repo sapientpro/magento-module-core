@@ -53,6 +53,11 @@ class CustomerPosAllowChecker
         }
     }
 
+    public function getCustomerId(): int
+    {
+        return $this->customerSession->getCustomerId();
+    }
+
     /**
      * @return int
      */
