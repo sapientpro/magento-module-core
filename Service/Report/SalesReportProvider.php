@@ -53,13 +53,13 @@ class SalesReportProvider
      * @param TimezoneInterface $timezone
      */
     public function __construct(
-        CollectionFactory $collectionFactory,
-        InvoiceRepositoryInterfaceFactory $invoiceCollectionFactory,
+        CollectionFactory                    $collectionFactory,
+        InvoiceRepositoryInterfaceFactory    $invoiceCollectionFactory,
         CreditmemoRepositoryInterfaceFactory $creditmemoCollectionFactory,
-        SearchCriteriaBuilder $searchCriteriaBuilder,
-        ModelFactory $modelFactory,
-        FilterBuilder $filterBuilder,
-        TimezoneInterface $timezone
+        SearchCriteriaBuilder                $searchCriteriaBuilder,
+        ModelFactory                         $modelFactory,
+        FilterBuilder                        $filterBuilder,
+        TimezoneInterface                    $timezone
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->invoiceCollectionFactory = $invoiceCollectionFactory;
@@ -117,7 +117,7 @@ class SalesReportProvider
     /**
      * @throws LocalizedException
      */
-    public function preparePaymentRefundOrders(DateTime $dateFrom = null, DateTime $dateTo = null): Collection
+    public function preparePaymentRefundOrders(DateTime $dateFrom = null, DateTime $dateTo = null, int $cashierId = null): Collection
     {
         $collectOrders = [];
         /** @var Collection $collection */
@@ -133,6 +133,11 @@ class SalesReportProvider
         /** @var SalesReportInterface $item */
         foreach ($result->getItems() as $item) {
             if (!isset($collectOrders[$item->getOrder()->getId()])) {
+                $order = $item->getOrder();
+                if ($cashierId !== null && $order->getData('cashier_id') != $cashierId) {
+                    continue;
+                }
+
                 $collectOrders[$item->getOrder()->getId()] = true;
                 $collection->addItem($item->getOrder());
             }
@@ -142,6 +147,11 @@ class SalesReportProvider
         /** @var SalesReportInterface $item */
         foreach ($result->getItems() as $item) {
             if (!isset($collectOrders[$item->getOrder()->getId()])) {
+                $order = $item->getOrder();
+                if ($cashierId !== null && $order->getData('cashier_id') != $cashierId) {
+                    continue;
+                }
+
                 $collectOrders[$item->getOrder()->getId()] = true;
                 $collection->addItem($item->getOrder());
             }
