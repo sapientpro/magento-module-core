@@ -74,4 +74,9 @@ class CustomerPosAllowChecker
     {
         $this->customerSession->setCashierId($cashierId);
     }
+
+    public function getCustomer($customerId)
+    {
+        return $this->customerRepository->getById($customerId);
+    }
 }
