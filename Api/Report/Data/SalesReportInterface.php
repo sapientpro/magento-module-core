@@ -14,6 +14,7 @@ interface SalesReportInterface
 
     public const CREDIT = 'credit';
     public const DISCOUNT = 'discount';
+    public const TAX = 'tax';
 
     public const SOURCES = 'sources';
 
@@ -97,6 +98,23 @@ interface SalesReportInterface
      * @return void
      */
     public function decreaseDiscount(float $value): void;
+
+    /**
+     * @return float
+     */
+    public function getTax(): float;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function increaseTax(float $value): void;
+
+    /**
+     * @param float $value
+     * @return void
+     */
+    public function decreaseTax(float $value): void;
 
     /**
      * @return float

@@ -75,6 +75,11 @@ class XReport implements ReportInterface
     private CashiersReportInterface $cashiersReport;
 
     /**
+     * @var int
+     */
+    private int $requestedUserId;
+
+    /**
      * PaymentViewModal constructor.
      *
      * @param PaymentConfig $paymentConfig
@@ -181,5 +186,18 @@ class XReport implements ReportInterface
     public function getCashiersInReport()
     {
         return $this->cashiersReport->getCashiers();
+    }
+
+    /**
+     * @param int|null $userId
+     * @return int
+     */
+    public function requestedUserReport(?int $userId = null)
+    {
+        if ($userId) {
+            $this->requestedUserId = $userId;
+        }
+
+        return $this->requestedUserId;
     }
 }

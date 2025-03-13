@@ -163,7 +163,8 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
                 $this->packersReport->addPacker($packer);
             }
 
-            $reportItem->increaseDebit($invoice->getGrandTotal());
+            $reportItem->increaseDebit($invoice->getSubtotal());
+            $reportItem->increaseTax($invoice->getTaxAmount());
             $reportItem->increaseTotal($order->getGrandTotal());
             $reportItem->increaseDiscount(trim($order->getDiscountAmount(), '-'));
         }

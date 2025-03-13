@@ -9,6 +9,9 @@ use SapientPro\Core\ViewModel\Report\XReport;
  */
 $viewModel = $block->getViewModel();
 $isSupervisor = $viewModel->isSupervisor();
+$fullReportData = $viewModel->getFullReportDataBySource();
+$reportByCashiers = $viewModel->getCashiersInReport();
+$requestedUserReport = $viewModel->requestedUserReport();
 $todayDate = (new \DateTime())->format('Y-m-d');
 ?>
 <style>
@@ -53,31 +56,35 @@ $todayDate = (new \DateTime())->format('Y-m-d');
 <div class="pdf-date">
     <h3><?= __('Date') . ": " . $todayDate ?></h3>
 </div>
-<table class="report-summary">
-    <thead>
-    <tr>
-        <th><?php echo __("Payment Method") ?></th>
-        <th><?php echo __("Debit") ?></th>
-        <th><?php echo __("Credit") ?></th>
-        <th><?php echo __("Discount") ?></th>
-        <th><?php echo __("Total") ?></th>
-    </tr>
-    </thead>
-    <tbody>
-    <?php foreach ($viewModel->getFullReportDataBySource() as $item): ?>
+<?php if ($isSupervisor) : ?>
+    <table class="report-summary">
+        <thead>
         <tr>
-            <td><?= $item->getTitle(); ?></td>
-            <td><?= $item->getDebit(); ?></td>
-            <td><?= $item->getCredit(); ?></td>
-            <td><?= $item->getDiscount(); ?></td>
-            <td><?= $item->getTotal(); ?></td>
+            <th><?php echo __("Payment Method") ?></th>
+            <th><?php echo __("Debit") ?></th>
+            <th><?php echo __("Credit") ?></th>
+            <th><?php echo __("Discount") ?></th>
+            <th><?php echo __("Tax") ?></th>
+            <th><?php echo __("Total") ?></th>
         </tr>
-    <?php endforeach; ?>
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+        <?php foreach ($fullReportData as $item): ?>
+            <tr>
+                <td><?= $item->getTitle(); ?></td>
+                <td><?= $item->getDebit(); ?></td>
+                <td><?= $item->getCredit(); ?></td>
+                <td><?= $item->getDiscount(); ?></td>
+                <td><?= $item->getTax(); ?></td>
+                <td><?= $item->getTotal(); ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+<?php endif; ?>
 
-<?php if ($isSupervisor): ?>
-    <?php foreach ($viewModel->getCashiersInReport() as $cashier) : ?>
+<?php foreach ($reportByCashiers as $cashier) : ?>
+    <?php if ($isSupervisor || (int)$cashier->getId() == $requestedUserReport): ?>
         <div class="cashier-section">
             <h4><?= __('Cashier') . ': ' . $cashier->getName() ?></h4>
             <table class="report-summary">
@@ -87,6 +94,7 @@ $todayDate = (new \DateTime())->format('Y-m-d');
                     <th><?= __('Debit') ?></th>
                     <th><?= __('Credit') ?></th>
                     <th><?= __('Discount') ?></th>
+                    <th><?= __('Tax') ?></th>
                     <th><?= __('Total') ?></th>
                 </tr>
                 </thead>
@@ -97,11 +105,12 @@ $todayDate = (new \DateTime())->format('Y-m-d');
                         <td><?= $paymentMethod->getDebit(); ?></td>
                         <td><?= $paymentMethod->getCredit(); ?></td>
                         <td><?= $paymentMethod->getDiscount(); ?></td>
+                        <td><?= $paymentMethod->getTax(); ?></td>
                         <td><?= $paymentMethod->getTotal(); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
         </div>
-    <?php endforeach; ?>
-<?php endif; ?>
+    <?php endif; ?>
+<?php endforeach; ?>

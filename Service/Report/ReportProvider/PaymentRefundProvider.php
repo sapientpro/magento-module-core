@@ -174,8 +174,9 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
                 $this->packersReport->addPacker($packer);
             }
 
-            $reportItem->decreaseDebit($creditMemo->getGrandTotal());
-            $reportItem->increaseCredit($creditMemo->getGrandTotal());
+            $reportItem->decreaseDebit($creditMemo->getSubtotal());
+            $reportItem->decreaseTax($creditMemo->getTaxAmount());
+            $reportItem->increaseCredit($creditMemo->getSubtotal());
             $reportItem->decreaseTotal($creditMemo->getGrandTotal());
         }
 

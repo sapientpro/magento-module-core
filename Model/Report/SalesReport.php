@@ -193,4 +193,28 @@ class SalesReport extends AbstractModel implements SalesReportInterface
     {
         $this->setData(SalesReportInterface::DISCOUNT, $this->getData(SalesReportInterface::DISCOUNT) - $value);
     }
+
+    /**
+     * @inherit
+     */
+    public function getTax(): float
+    {
+        return $this->getData(SalesReportInterface::TAX) ?? 0;
+    }
+
+    /**
+     * @inherit
+     */
+    public function increaseTax(float $value): void
+    {
+        $this->setData(SalesReportInterface::TAX, $this->getData(SalesReportInterface::TAX) + $value);
+    }
+
+    /**
+     * @inherit
+     */
+    public function decreaseTax(float $value): void
+    {
+        $this->setData(SalesReportInterface::TAX, $this->getData(SalesReportInterface::TAX) - $value);
+    }
 }
