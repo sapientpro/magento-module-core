@@ -18,6 +18,8 @@ interface SalesReportInterface
 
     public const SOURCES = 'sources';
 
+    public const SORT_ORDER = 'sort_order';
+
     public const DATE_FROM = 'date_from';
 
     public const DATE_TO = 'date_to';
@@ -149,6 +151,17 @@ interface SalesReportInterface
      * @return void
      */
     public function setSources(array $sources): void;
+
+    /**
+     * @return int
+     */
+    public function getSortOrder(): int;
+
+    /**
+     * @param int $sortOrder
+     * @return void
+     */
+    public function setSortOrder(int $sortOrder): void;
 
     /**
      * @return DateTime

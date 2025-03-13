@@ -3,10 +3,8 @@
 namespace SapientPro\Core\Service\Report\ReportProvider;
 
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Customer\Api\Data\CustomerInterface;
 use Magento\Framework\DataObject;
 use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
 use SapientPro\Core\Api\Report\ReportProvider\ReportProviderInterface;
 use Magento\Framework\Data\Collection;
 use Magento\Framework\Data\CollectionFactory;
@@ -23,6 +21,7 @@ use DateTime;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
 use SapientPro\Core\Api\Report\Data\CashiersReportInterface;
 use SapientPro\Core\Api\Report\Data\PackersReportInterface;
+use SapientPro\Core\Service\PaymentMethodProvider;
 
 class PaymentRefundProvider extends PaymentReportProviderAbstract implements ReportProviderInterface
 {
@@ -82,6 +81,11 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
     private PackersReportInterface $packersReport;
 
     /**
+     * @var PaymentMethodProvider
+     */
+    private PaymentMethodProvider $paymentMethodProvider;
+
+    /**
      * Sales Report Provider Constructor
      *
      * @param CollectionFactory $collectionFactory
@@ -95,6 +99,7 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
      * @param CustomerCollectionFactory $customerCollectionFactory
      * @param CashiersReportInterface $cashiersReport
      * @param PackersReportInterface $packersReport
+     * @param PaymentMethodProvider $paymentMethodProvider
      */
     public function __construct(
         CollectionFactory $collectionFactory,
@@ -107,7 +112,8 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
         TimezoneInterface $timezone,
         CustomerCollectionFactory $customerCollectionFactory,
         CashiersReportInterface $cashiersReport,
-        PackersReportInterface $packersReport
+        PackersReportInterface $packersReport,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->invoiceCollectionFactory = $invoiceCollectionFactory;
@@ -123,6 +129,7 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
         $this->customerCollectionFactory = $customerCollectionFactory;
         $this->cashiersReport = $cashiersReport;
         $this->packersReport = $packersReport;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -152,11 +159,18 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
             $paymentCode = $payment->getMethodInstance()->getCode();
             $paymentTitle = $payment->getMethodInstance()->getTitle();
 
+            if (!$this->paymentMethodProvider->isPaymentMethodIncludedInReport($paymentCode)) {
+                continue;
+            }
+
             /** @var SalesReportInterface $reportItem */
             if (!$collection->getItemById($paymentCode)) {
                 $reportItem = $this->modelFactory->create(SalesReportInterface::class);
                 $reportItem->setId($paymentCode);
                 $reportItem->setTitle($paymentTitle);
+                $reportItem->setSortOrder(
+                    $this->paymentMethodProvider->getPaymentMethodSortOrder($paymentCode)
+                );
                 $collectByPaymentTypes[$paymentCode] = $reportItem;
                 $collection->addItem($reportItem);
             } else {

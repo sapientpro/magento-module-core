@@ -20,6 +20,8 @@ use DateTime;
 use Magento\Customer\Model\ResourceModel\Customer\CollectionFactory as CustomerCollectionFactory;
 use SapientPro\Core\Api\Report\Data\CashiersReportInterface;
 use SapientPro\Core\Api\Report\Data\PackersReportInterface;
+use SapientPro\Core\Service\PaymentMethodProvider;
+use Magento\Payment\Model\Config as PaymentConfig;
 
 class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract implements ReportProviderInterface
 {
@@ -77,6 +79,16 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
     private PackersReportInterface $packersReport;
 
     /**
+     * @var PaymentConfig
+     */
+    private PaymentConfig $paymentConfig;
+
+    /**
+     * @var PaymentMethodProvider
+     */
+    private PaymentMethodProvider $paymentMethodProvider;
+
+    /**
      * Sales Report Provider Constructor
      *
      * @param CollectionFactory $collectionFactory
@@ -89,6 +101,8 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
      * @param CustomerCollectionFactory $customerCollectionFactory
      * @param CashiersReportInterface $cashiersReport
      * @param PackersReportInterface $packersReport
+     * @param PaymentConfig $paymentConfig
+     * @param PaymentMethodProvider $paymentMethodProvider
      */
     public function __construct(
         CollectionFactory $collectionFactory,
@@ -100,7 +114,9 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
         TimezoneInterface $timezone,
         CustomerCollectionFactory $customerCollectionFactory,
         CashiersReportInterface $cashiersReport,
-        PackersReportInterface $packersReport
+        PackersReportInterface $packersReport,
+        PaymentConfig $paymentConfig,
+        PaymentMethodProvider $paymentMethodProvider
     ) {
         $this->collectionFactory = $collectionFactory;
         $this->invoiceCollectionFactory = $invoiceCollectionFactory;
@@ -115,6 +131,8 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
         $this->customerCollectionFactory = $customerCollectionFactory;
         $this->cashiersReport = $cashiersReport;
         $this->packersReport = $packersReport;
+        $this->paymentConfig = $paymentConfig;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -141,11 +159,18 @@ class PaymentInvoiceReportProvider extends PaymentReportProviderAbstract impleme
             $paymentCode = $payment->getMethodInstance()->getCode();
             $paymentTitle = $payment->getMethodInstance()->getTitle();
 
+            if (!$this->paymentMethodProvider->isPaymentMethodIncludedInReport($paymentCode)) {
+                continue;
+            }
+
             /** @var SalesReportInterface $reportItem */
             if (!$collection->getItemById($paymentCode)) {
                 $reportItem = $this->modelFactory->create(SalesReportInterface::class);
                 $reportItem->setId($paymentCode);
                 $reportItem->setTitle($paymentTitle);
+                $reportItem->setSortOrder(
+                    $this->paymentMethodProvider->getPaymentMethodSortOrder($paymentCode)
+                );
                 $collectByPaymentTypes[$paymentCode] = $reportItem;
                 $collection->addItem($reportItem);
             } else {

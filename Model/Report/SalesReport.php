@@ -77,6 +77,22 @@ class SalesReport extends AbstractModel implements SalesReportInterface
     /**
      * @inherit
      */
+    public function getSortOrder(): int
+    {
+        return $this->getData(SalesReportInterface::SORT_ORDER) ?? 0;
+    }
+
+    /**
+     * @inherit
+     */
+    public function setSortOrder(int $sortOrder): void
+    {
+        $this->setData(SalesReportInterface::SORT_ORDER, $sortOrder);
+    }
+
+    /**
+     * @inherit
+     */
     public function getDateFrom(): \DateTime
     {
         return $this->getData(SalesReportInterface::DATE_FROM);
