@@ -5,6 +5,7 @@ namespace SapientPro\Core\Service\Pos;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Customer\Model\Session as CustomerSession;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Customer\Api\Data\CustomerInterface;
 
 class CustomerPosAllowChecker
 {
@@ -75,8 +76,18 @@ class CustomerPosAllowChecker
         $this->customerSession->setCashierId($cashierId);
     }
 
-    public function getCustomer($customerId)
+    /**
+     * Get customer by id
+     *
+     * @param mixed $customerId
+     * @return CustomerInterface|null
+     */
+    public function getCustomer($customerId): ?CustomerInterface
     {
-        return $this->customerRepository->getById($customerId);
+        try {
+            return $this->customerRepository->getById($customerId);
+        } catch (\Throwable $exception) {
+            return null;
+        }
     }
 }
