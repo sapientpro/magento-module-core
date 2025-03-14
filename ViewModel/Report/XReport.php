@@ -13,6 +13,7 @@ use Magento\Framework\Data\CollectionFactory;
 use DateTime;
 use SapientPro\Core\Api\Report\Data\CashiersReportInterface;
 use SapientPro\Core\Model\Report\ReportStatus;
+use Magento\Framework\Pricing\Helper\Data as PricingHelper;
 
 class XReport implements ReportInterface
 {
@@ -62,13 +63,10 @@ class XReport implements ReportInterface
     private string $filterSourceId;
 
     /**
-     * @var Collection
-     */
-    private Collection $cashiersInReport;
-    /**
      * @var CustomerReportCollection
      */
     private CustomerReportCollection $customerReportCollection;
+
     /**
      * @var CashiersReportInterface
      */
@@ -80,27 +78,34 @@ class XReport implements ReportInterface
     private int $requestedUserId;
 
     /**
+     * @var PricingHelper
+     */
+    private PricingHelper $pricingHelper;
+
+    /**
      * PaymentViewModal constructor.
      *
      * @param PaymentConfig $paymentConfig
      * @param FundsInflowReportGeneratorsInterfaceFactory $fundsInflowReportGeneratorsFactory
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
-     * @param CollectionFactory $collectionFactory
+     * @param CustomerReportCollection $customerReportCollection
+     * @param CashiersReportInterface $cashiersReport
+     * @param PricingHelper $pricingHelper
      */
     public function __construct(
         PaymentConfig                               $paymentConfig,
         FundsInflowReportGeneratorsInterfaceFactory $fundsInflowReportGeneratorsFactory,
         SearchCriteriaBuilder                       $searchCriteriaBuilder,
         CustomerReportCollection                    $customerReportCollection,
-        CollectionFactory                           $collectionFactory,
-        CashiersReportInterface                     $cashiersReport
-    )
-    {
+        CashiersReportInterface                     $cashiersReport,
+        PricingHelper                               $pricingHelper
+    ) {
         $this->paymentConfig = $paymentConfig;
         $this->fundsInflowReportGeneratorsFactory = $fundsInflowReportGeneratorsFactory;
         $this->searchCriteriaBuilder = $searchCriteriaBuilder;
         $this->customerReportCollection = $customerReportCollection;
         $this->cashiersReport = $cashiersReport;
+        $this->pricingHelper = $pricingHelper;
     }
 
     /**
@@ -199,5 +204,16 @@ class XReport implements ReportInterface
         }
 
         return $this->requestedUserId;
+    }
+
+    /**
+     * Price currency formater
+     *
+     * @param $price
+     * @return string
+     */
+    public function currency($price): string
+    {
+        return $this->pricingHelper->currency($price, true, false);
     }
 }

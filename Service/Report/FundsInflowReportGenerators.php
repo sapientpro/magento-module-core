@@ -89,6 +89,7 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
     {
         $collection = $this->collectionFactory->create();
         $excludedPayments = $this->reportConfig->getExcludedPayments($reportType);
+
         /** @var ReportProviderInterface $provider */
         foreach ($this->providers as $provider) {
             $provider->setFilters($this->orderFilters);
@@ -111,8 +112,16 @@ class FundsInflowReportGenerators implements FundsInflowReportGeneratorsInterfac
             }
         }
 
-        return $collection;
+        $items = $collection->getItems();
+        usort($items, function ($a, $b) {
+            return $a->getSortOrder() <=> $b->getSortOrder();
+        });
+
+        $sortedCollection = $this->collectionFactory->create();
+        foreach ($items as $item) {
+            $sortedCollection->addItem($item);
+        }
+
+        return $sortedCollection;
     }
-
-
 }

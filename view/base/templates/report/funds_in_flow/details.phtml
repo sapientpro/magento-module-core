@@ -72,11 +72,11 @@ $todayDate = (new \DateTime())->format('Y-m-d');
         <?php foreach ($fullReportData as $item): ?>
             <tr>
                 <td><?= $item->getTitle(); ?></td>
-                <td><?= $item->getDebit(); ?></td>
-                <td><?= $item->getCredit(); ?></td>
-                <td><?= $item->getDiscount(); ?></td>
-                <td><?= $item->getTax(); ?></td>
-                <td><?= $item->getTotal(); ?></td>
+                <td><?= $viewModel->currency($item->getDebit()); ?></td>
+                <td><?= $viewModel->currency($item->getCredit()); ?></td>
+                <td><?= $viewModel->currency($item->getDiscount()); ?></td>
+                <td><?= $viewModel->currency($item->getTax()); ?></td>
+                <td><?= $viewModel->currency($item->getTotal()); ?></td>
             </tr>
         <?php endforeach; ?>
         </tbody>
@@ -102,11 +102,11 @@ $todayDate = (new \DateTime())->format('Y-m-d');
                 <?php foreach ($viewModel->getFullReportDataByCashier((int)$cashier->getId()) as $paymentMethod): ?>
                     <tr>
                         <td><?= $paymentMethod->getTitle(); ?></td>
-                        <td><?= $paymentMethod->getDebit(); ?></td>
-                        <td><?= $paymentMethod->getCredit(); ?></td>
-                        <td><?= $paymentMethod->getDiscount(); ?></td>
-                        <td><?= $paymentMethod->getTax(); ?></td>
-                        <td><?= $paymentMethod->getTotal(); ?></td>
+                        <td><?= $viewModel->currency($paymentMethod->getDebit()); ?></td>
+                        <td><?= $viewModel->currency($paymentMethod->getCredit()); ?></td>
+                        <td><?= $viewModel->currency($paymentMethod->getDiscount()); ?></td>
+                        <td><?= $viewModel->currency($paymentMethod->getTax()); ?></td>
+                        <td><?= $viewModel->currency($paymentMethod->getTotal()); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
