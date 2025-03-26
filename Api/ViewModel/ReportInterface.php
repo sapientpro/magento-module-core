@@ -50,4 +50,9 @@ interface ReportInterface extends ArgumentInterface
      * @return mixed
      */
     public function addPackerFilter(int $packerId);
+
+    /**
+     * @return string
+     */
+    public function getSourceName(): string;
 }

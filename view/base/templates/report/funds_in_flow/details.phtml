@@ -12,6 +12,7 @@ $isSupervisor = $viewModel->isSupervisor();
 $fullReportData = $viewModel->getFullReportDataBySource();
 $reportByCashiers = $viewModel->getCashiersInReport();
 $requestedUserReport = $viewModel->requestedUserReport();
+$sourceName = $viewModel->getSourceName();
 $todayDate = (new \DateTime())->format('Y-m-d');
 ?>
 <style>
@@ -54,7 +55,10 @@ $todayDate = (new \DateTime())->format('Y-m-d');
 </style>
 
 <div class="pdf-date">
-    <h3><?= __('Date') . ": " . $todayDate ?></h3>
+    <h3><?= __('Date') . ": " . $todayDate ?>
+        <br>
+        <?= __('Source') . ": " . $sourceName ?>
+    </h3>
 </div>
 <?php if ($isSupervisor) : ?>
     <table class="report-summary">

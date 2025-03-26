@@ -14,6 +14,7 @@ use DateTime;
 use SapientPro\Core\Api\Report\Data\CashiersReportInterface;
 use SapientPro\Core\Model\Report\ReportStatus;
 use Magento\Framework\Pricing\Helper\Data as PricingHelper;
+use Magento\InventoryApi\Api\SourceRepositoryInterface;
 
 class XReport implements ReportInterface
 {
@@ -81,6 +82,10 @@ class XReport implements ReportInterface
      * @var PricingHelper
      */
     private PricingHelper $pricingHelper;
+    /**
+     * @var SourceRepositoryInterface
+     */
+    private SourceRepositoryInterface $sourceRepository;
 
     /**
      * PaymentViewModal constructor.
@@ -91,14 +96,16 @@ class XReport implements ReportInterface
      * @param CustomerReportCollection $customerReportCollection
      * @param CashiersReportInterface $cashiersReport
      * @param PricingHelper $pricingHelper
+     * @param SourceRepositoryInterface $sourceRepository
      */
     public function __construct(
-        PaymentConfig                               $paymentConfig,
+        PaymentConfig $paymentConfig,
         FundsInflowReportGeneratorsInterfaceFactory $fundsInflowReportGeneratorsFactory,
-        SearchCriteriaBuilder                       $searchCriteriaBuilder,
-        CustomerReportCollection                    $customerReportCollection,
-        CashiersReportInterface                     $cashiersReport,
-        PricingHelper                               $pricingHelper
+        SearchCriteriaBuilder $searchCriteriaBuilder,
+        CustomerReportCollection $customerReportCollection,
+        CashiersReportInterface $cashiersReport,
+        PricingHelper $pricingHelper,
+        SourceRepositoryInterface $sourceRepository
     ) {
         $this->paymentConfig = $paymentConfig;
         $this->fundsInflowReportGeneratorsFactory = $fundsInflowReportGeneratorsFactory;
@@ -106,6 +113,7 @@ class XReport implements ReportInterface
         $this->customerReportCollection = $customerReportCollection;
         $this->cashiersReport = $cashiersReport;
         $this->pricingHelper = $pricingHelper;
+        $this->sourceRepository = $sourceRepository;
     }
 
     /**
@@ -215,5 +223,23 @@ class XReport implements ReportInterface
     public function currency($price): string
     {
         return $this->pricingHelper->currency($price, true, false);
+    }
+
+    /**
+     * @return string
+     */
+    public function getSourceName(): string
+    {
+        $sourceId = $this->filterSourceId;
+        if ($sourceId) {
+            try {
+                $source = $this->sourceRepository->get($sourceId);
+                return $source->getName();
+            } catch (\Exception $e) {
+                return '';
+            }
+        }
+
+        return '';
     }
 }
