@@ -12,7 +12,7 @@ use Magento\Framework\Setup\ModuleDataSetupInterface;
 use Magento\Customer\Model\Customer;
 use Magento\Eav\Model\Entity\Attribute\Set;
 use Magento\Framework\Setup\Patch\PatchRevertableInterface;
-use SapientPro\PointOfSale\Model\Attribute\Source\PosSource;
+use SapientPro\Core\Model\Attribute\Source\PosSource;
 
 class AddPinnedPosSourceAttribute implements DataPatchInterface, PatchRevertableInterface
 {
