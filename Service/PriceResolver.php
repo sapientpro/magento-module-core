@@ -72,9 +72,12 @@ class PriceResolver
      * @param Product $product
      * @return string
      */
-    public function getPrice(Product $product): string
+    public function getPrice(Product $product, ?int $buyerId = null): string
     {
-        $buyerId = $this->customerSession->getBuyerId();
+        if ($buyerId === null) {
+            $buyerId = $this->customerSession->getBuyerId();
+        }
+
         $price = $product->getSpecialPrice() ?: $product->getPrice();
 
         if (!$buyerId) {
