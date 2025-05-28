@@ -177,14 +177,13 @@ class PaymentRefundProvider extends PaymentReportProviderAbstract implements Rep
                 $reportItem = $collection->getItemById($paymentCode);
             }
 
-            $cashier = $this->getCustomerById($order->getCashierId());
-            $packer = $this->getCustomerById($order->getPackerId());
-
-            if ($cashier->getId()) {
+            if ($order->getCashierId()) {
+                $cashier = $this->getCustomerById($order->getCashierId());
                 $this->cashiersReport->addCashier($cashier);
             }
 
-            if ($packer->getId()) {
+            if ($order->getPackerId()) {
+                $packer = $this->getCustomerById($order->getPackerId());
                 $this->packersReport->addPacker($packer);
             }
 
